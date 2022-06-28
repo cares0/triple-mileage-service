@@ -2,6 +2,7 @@ package com.triple.event.domain.event;
 
 import com.triple.event.domain.common.BaseEntity;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -26,5 +27,13 @@ public class Event extends BaseEntity {
 
     @Enumerated(value = STRING)
     private EventType eventType;
+
+    @Builder
+    private Event(String id, String typeId, EventAction eventAction, EventType eventType) {
+        this.id = id;
+        this.typeId = typeId;
+        this.eventAction = eventAction;
+        this.eventType = eventType;
+    }
 
 }
