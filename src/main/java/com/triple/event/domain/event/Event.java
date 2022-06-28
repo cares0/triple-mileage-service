@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
+import java.util.UUID;
+
 import static javax.persistence.EnumType.*;
 import static lombok.AccessLevel.*;
 
@@ -29,8 +31,8 @@ public class Event extends BaseEntity {
     private EventType eventType;
 
     @Builder
-    private Event(String id, String typeId, EventAction eventAction, EventType eventType) {
-        this.id = id;
+    private Event(String typeId, EventAction eventAction, EventType eventType) {
+        this.id = UUID.randomUUID().toString();
         this.typeId = typeId;
         this.eventAction = eventAction;
         this.eventType = eventType;

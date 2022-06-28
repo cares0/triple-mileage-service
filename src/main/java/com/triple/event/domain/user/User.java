@@ -1,7 +1,6 @@
-package com.triple.event.domain.place;
+package com.triple.event.domain.user;
 
 import com.triple.event.domain.common.BaseEntity;
-import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,6 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 import java.util.UUID;
 
@@ -16,17 +16,18 @@ import static lombok.AccessLevel.*;
 
 @Entity
 @Getter
+@Table(name = "users")
 @NoArgsConstructor(access = PROTECTED)
-public class Place extends BaseEntity {
+public class User extends BaseEntity {
 
     @Id
-    @Column(name = "place_id")
+    @Column(name = "user_id")
     private String id;
 
     private String name;
 
     @Builder
-    private Place(String name) {
+    private User(String name) {
         this.id = UUID.randomUUID().toString();
         this.name = name;
     }

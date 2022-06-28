@@ -1,12 +1,17 @@
 package com.triple.event.domain.mileage;
 
 import com.triple.event.domain.common.BaseEntity;
-import com.triple.event.domain.member.Member;
-import lombok.AccessLevel;
+import com.triple.event.domain.mileagehistory.MileageHistory;
+import com.triple.event.domain.user.User;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 import static javax.persistence.FetchType.*;
 import static lombok.AccessLevel.*;
@@ -21,9 +26,22 @@ public class Mileage extends BaseEntity {
     private String id;
 
     @OneToOne(fetch = LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @OneToMany(mappedBy = "mileage")
+    private List<MileageHistory> mileageHistories = new ArrayList<>();
 
     private Integer point;
 
+    @Builder
+    private Mileage(User user, Integer point) {
+        this.id = UUID.randomUUID().toString();
+        this.user = user;
+        this.point = point;
+    }
+
+    public void updateMileage(Integer modifiedPoint) {
+        point += modifiedPoint;
+    }
 }

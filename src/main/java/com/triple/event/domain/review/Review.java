@@ -1,13 +1,15 @@
 package com.triple.event.domain.review;
 
 import com.triple.event.domain.common.BaseEntity;
-import com.triple.event.domain.member.Member;
+import com.triple.event.domain.user.User;
 import com.triple.event.domain.place.Place;
-import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+
+import java.util.UUID;
 
 import static javax.persistence.FetchType.*;
 import static lombok.AccessLevel.*;
@@ -26,8 +28,17 @@ public class Review extends BaseEntity {
     private Place place;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
+    @JoinColumn(name = "user_id")
+    private User user;
 
     private String content;
+
+    @Builder
+    private Review(Place place, User user, String content) {
+        this.id = UUID.randomUUID().toString();
+        this.place = place;
+        this.user = user;
+        this.content = content;
+    }
+
 }
