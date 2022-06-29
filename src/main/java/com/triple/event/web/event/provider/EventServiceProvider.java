@@ -2,30 +2,26 @@ package com.triple.event.web.event.provider;
 
 import com.triple.event.domain.event.EventService;
 import com.triple.event.domain.event.EventServiceReviewImpl;
+import com.triple.event.domain.event.EventType;
 import com.triple.event.web.event.request.EventRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 public class EventServiceProvider {
 
-    private final List<EventService> eventServiceList;
+    private final Map<EventType, EventService> eventServiceMap;
 
     @Autowired
     public EventServiceProvider(EventServiceReviewImpl eventServiceReviewImpl) {
-        eventServiceList = new ArrayList<>();
-        eventServiceList.add(eventServiceReviewImpl);
+        eventServiceMap = new HashMap<>();
+        eventServiceMap.put(EventType.REVIEW, eventServiceReviewImpl);
     }
 
     public EventService getEventService(EventRequest eventRequest) {
-        for (EventService eventService : eventServiceList) {
-            if (eventService.support(eventRequest)) {
-                return eventService;
-            }
-        }
-        throw new IllegalArgumentException("유효한 타입이 아님");
+        return eventServiceMap.get(eventRequest.getType());
     }
 }

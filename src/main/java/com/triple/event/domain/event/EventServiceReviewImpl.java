@@ -28,11 +28,6 @@ public class EventServiceReviewImpl implements EventService {
     private final MileageHistoryRepository mileageHistoryRepository;
     private final EventRepository eventRepository;
 
-    @Override
-    public boolean support(EventRequest eventRequest) {
-        return eventRequest.getType() == EventType.REVIEW ? true : false;
-    }
-
     public void add(Mileage mileage, Place place, Event event, String content, List<String> attachedPhotoIds) {
         // 이벤트 저장
         eventRepository.save(event);
