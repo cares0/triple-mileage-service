@@ -2,12 +2,10 @@ package com.triple.event.domain.event;
 
 import com.triple.event.domain.exception.EntityNotFoundException;
 import com.triple.event.domain.mileage.Mileage;
-import com.triple.event.domain.mileage.MileageRepository;
 import com.triple.event.domain.mileagehistory.MileageHistory;
 import com.triple.event.domain.mileagehistory.MileageHistoryRepository;
 import com.triple.event.domain.mileagehistory.ModifyingFactor;
 import com.triple.event.domain.place.Place;
-import com.triple.event.domain.place.PlaceRepository;
 import com.triple.event.domain.review.ReviewRepository;
 import com.triple.event.web.event.request.EventRequest;
 import lombok.RequiredArgsConstructor;
@@ -53,7 +51,19 @@ public class EventServiceReviewImpl implements EventService {
 
                 break;
             case MOD:
+                MileageHistory previousHistory = mileageHistoryRepository.findMileageHistoryByTypeId(event.getTypeId()).orElseThrow(() ->
+                        new EntityNotFoundException("해당 ReviewId를 가진 이벤트를 찾을 수 없음"));
 
+                modifyingFactor = getModifyingFactor(content, attachedPhotoIds);
+                bonusPoint = previousHistory.getBonusPoint();
+
+                MileageHistory modifiedHistory = getMileageHistory(event, mileage, place, modifyingFactor, bonusPoint);
+
+                Integer contentPoint = modifiedHistory.getContentPoint() - previousHistory.getContentPoint();
+                modifiedHistory.editPoint(contentPoint);
+
+                modifiedHistory.updateMileage();
+                mileageHistoryRepository.save(modifiedHistory);
                 break;
             case DELETE:
 
