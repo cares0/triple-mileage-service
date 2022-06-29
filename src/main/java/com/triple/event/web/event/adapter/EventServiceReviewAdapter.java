@@ -4,7 +4,7 @@ import com.triple.event.domain.event.Event;
 import com.triple.event.domain.event.EventService;
 import com.triple.event.domain.event.EventServiceReviewImpl;
 import com.triple.event.domain.mileage.Mileage;
-import com.triple.event.domain.mileage.MileageService;
+import com.triple.event.domain.mileage.MileageQueryService;
 import com.triple.event.domain.place.Place;
 import com.triple.event.domain.place.PlaceService;
 import com.triple.event.web.event.request.EventRequest;
@@ -20,7 +20,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class EventServiceReviewAdapter implements EventServiceAdapter {
 
-    private final MileageService mileageService;
+    private final MileageQueryService mileageQueryService;
     private final PlaceService placeService;
 
     @Override
@@ -30,7 +30,7 @@ public class EventServiceReviewAdapter implements EventServiceAdapter {
 
     @Override
     public Map<String, String> adapt(EventRequest eventRequest, EventService eventService) {
-        Mileage mileage = mileageService.getOneByUserId(eventRequest.getUserId());
+        Mileage mileage = mileageQueryService.getOneByUserId(eventRequest.getUserId());
         Place place = placeService.getOneById(eventRequest.getPlaceId());
         Event event = eventRequest.toEvent();
         EventServiceReviewImpl eventServiceReviewImpl = (EventServiceReviewImpl) eventService;

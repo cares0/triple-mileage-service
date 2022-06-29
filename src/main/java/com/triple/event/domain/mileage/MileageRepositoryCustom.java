@@ -4,5 +4,7 @@ import java.util.Optional;
 
 public interface MileageRepositoryCustom {
 
-    Optional<Mileage> findOptionalByUserId(String userId);
+    Optional<Mileage> findByUserId(String userId);
+
+    Optional<Mileage> findByIdWithUser(String mileageId);
 }
