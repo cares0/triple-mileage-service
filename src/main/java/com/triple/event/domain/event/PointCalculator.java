@@ -9,12 +9,11 @@ public class PointCalculator {
         switch (modifyingFactor) {
             case REVIEW_TEXT:
             case REVIEW_PHOTO:
-            case FIRST_REVIEW:
                 point = 1;
                 break;
             case REVIEW_TEXT_AND_PHOTO:
                 point = 2;
         }
-        return point;
+        return point; // 삭제된 경우는 0
     }
 }

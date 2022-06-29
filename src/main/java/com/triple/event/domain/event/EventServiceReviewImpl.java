@@ -7,7 +7,6 @@ import com.triple.event.domain.mileagehistory.MileageHistoryRepository;
 import com.triple.event.domain.mileagehistory.ModifyingFactor;
 import com.triple.event.domain.place.Place;
 import com.triple.event.domain.review.ReviewRepository;
-import com.triple.event.web.event.request.EventRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,9 +55,9 @@ public class EventServiceReviewImpl implements EventService {
                 bonusPoint = previousHistory.getBonusPoint();
 
                 // 이전 이력에서 부여된 총 점수 계산
-                previousPoint = previousHistory.getContentPoint() + previousHistory.getBonusPoint();
+                previousPoint = getPreviousPoint(previousHistory);
 
-                // 점수 변경 요인
+                // 점수 변경 요인 가져오기
                 modifyingFactor = getModifyingFactor(content, attachedPhotoIds);
 
                 // 변경 요인을 가지고 내용 점수 계산, 이전 이력에서 부여된 점수가지고 변경된 점수 계산, 마일리지 업데이트 후 저장
@@ -68,8 +67,25 @@ public class EventServiceReviewImpl implements EventService {
                 mileageHistoryRepository.save(modifiedHistory);
                 break;
             case DELETE:
+                // 이전 이력 가져오기
+                previousHistory = getPreviousHistory(event);
 
+                // 삭제이기에 보너스0, 변경 요인도 DELETE (PointCalculator 에서 0으로 계산해줌)
+                bonusPoint = 0;
+                modifyingFactor = ModifyingFactor.DELETE_REVIEW;
+
+                // 이전 이력에서 부여된 총 점수 계산
+                previousPoint = getPreviousPoint(previousHistory);
+
+                // 로직 공통적으로 적용 가능
+                modifiedHistory = getMileageHistory(event, mileage, place, previousPoint, modifyingFactor, bonusPoint);
+                modifiedHistory.updateMileage();
+                mileageHistoryRepository.save(modifiedHistory);
         }
+    }
+
+    private int getPreviousPoint(MileageHistory previousHistory) {
+        return previousHistory.getContentPoint() + previousHistory.getBonusPoint();
     }
 
     private MileageHistory getPreviousHistory(Event event) {

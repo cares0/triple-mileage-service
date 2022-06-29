@@ -28,7 +28,7 @@ class EventServiceReviewImplTest {
     EventServiceReviewImpl eventServiceReviewImpl;
 
     @Test
-    @DisplayName("마일리지 적립 - 첫 리뷰인 경우")
+    @DisplayName("리뷰 저장 이벤트 - 첫 리뷰인 경우")
     public void 마일리지적립_ADD_첫리뷰() throws Exception {
         // given
         User user = createUser();
@@ -72,7 +72,7 @@ class EventServiceReviewImplTest {
     }
 
     @Test
-    @DisplayName("마일리지 적립 - 첫 리뷰가 아닌 경우")
+    @DisplayName("리뷰 저장 이벤트 - 첫 리뷰가 아닌 경우")
     public void 마일리지적립_ADD() throws Exception {
         // given
         Place place1 = createPlace();
@@ -133,7 +133,7 @@ class EventServiceReviewImplTest {
     }
 
     @Test
-    @DisplayName("마일리지 수정 - 증가할 경우")
+    @DisplayName("리뷰 수정 이벤트 - 증가할 경우")
     public void 마일리지적립_MOD_사진추가() throws Exception {
         // given
         User user = createUser();
@@ -167,7 +167,7 @@ class EventServiceReviewImplTest {
     }
 
     @Test
-    @DisplayName("마일리지 수정 - 감소할 경우")
+    @DisplayName("리뷰 수정 이벤트 - 감소할 경우")
     public void 마일리지적립_MOD_사진삭제() throws Exception {
         // given
         User user = createUser();
@@ -200,7 +200,7 @@ class EventServiceReviewImplTest {
     }
 
     @Test
-    @DisplayName("마일리지 수정 - 동일할 경우")
+    @DisplayName("리뷰 수정 이벤트 - 동일할 경우")
     public void 마일리지적립_MOD_동일() throws Exception {
         // given
         User user = createUser();
@@ -233,7 +233,7 @@ class EventServiceReviewImplTest {
     }
 
     @Test
-    @DisplayName("마일리지 수정 - 여러 번 수정할 경우")
+    @DisplayName("리뷰 수정 이벤트 - 여러 번 수정할 경우")
     public void 마일리지적립_MOD_여러번() throws Exception {
         // given
         User user = createUser();
@@ -267,7 +267,7 @@ class EventServiceReviewImplTest {
         List<MileageHistory> mileageHistories = findMileage.getMileageHistories();
 
         // then
-        assertThat(mileageHistories.get(0).getModifiedPoint()).isEqualTo(2); // 이전 적립 이력
+        assertThat(mileageHistories.get(0).getModifiedPoint()).isEqualTo(2); // 리뷰 처음 등록했을 때 적립 이력
         assertThat(mileageHistories.get(0).getContentPoint()).isEqualTo(1);
         assertThat(mileageHistories.get(1).getModifiedPoint()).isEqualTo(0); // 첫 번째 수정 적립 이력
         assertThat(mileageHistories.get(1).getContentPoint()).isEqualTo(1);
@@ -276,6 +276,36 @@ class EventServiceReviewImplTest {
         assertThat(mileageHistories.get(3).getModifiedPoint()).isEqualTo(-1); // 세 번째 수정 적립 이력
         assertThat(mileageHistories.get(3).getContentPoint()).isEqualTo(1);
         assertThat(findMileage.getPoint()).isEqualTo(2); // 마일리지 총점
+    }
+
+    @Test
+    @DisplayName("리뷰 삭제 이벤트")
+    public void 마일리지적립_DELETE() throws Exception {
+        // given
+        User user = createUser();
+        Mileage mileage = createMileage(user);
+        Place place = createPlace();
+        Review review = createReview(user, place);
+
+        // 리뷰 작성
+        Event event = createEvent(review, EventAction.ADD);
+        eventServiceReviewImpl.add(mileage, place, event, "좋아요", new ArrayList<>());
+
+        // when
+        // 리뷰 삭제 발생
+        Event modEvent = createEvent(review, EventAction.DELETE);
+        eventServiceReviewImpl.add(mileage, place, modEvent, "", new ArrayList<>());
+
+        em.flush();
+        em.clear();
+
+        Mileage findMileage = em.find(Mileage.class, mileage.getId());
+        List<MileageHistory> mileageHistories = findMileage.getMileageHistories();
+
+        // then
+        assertThat(mileageHistories.get(0).getModifiedPoint()).isEqualTo(2); // 리뷰 작성 시 적립 이력
+        assertThat(mileageHistories.get(1).getModifiedPoint()).isEqualTo(-2); // 리뷰 삭제 시 적립 이력
+        assertThat(findMileage.getPoint()).isEqualTo(0); // 마일리지 총점
     }
 
     private Event createEvent(Review review1, EventAction eventAction) {
