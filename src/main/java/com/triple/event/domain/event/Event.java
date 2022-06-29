@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.domain.Persistable;
 
 import javax.persistence.*;
 
@@ -16,7 +17,7 @@ import static lombok.AccessLevel.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = PROTECTED)
-public class Event extends BaseEntity {
+public class Event extends BaseEntity implements Persistable<String> {
 
     @Id
     @Column(name = "event_id")
@@ -38,4 +39,8 @@ public class Event extends BaseEntity {
         this.eventType = eventType;
     }
 
+    @Override
+    public boolean isNew() {
+        return true;
+    }
 }

@@ -1,10 +1,9 @@
 package com.triple.event.domain.mileagehistory;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.triple.event.domain.event.QEvent;
 
 import javax.persistence.EntityManager;
-import java.util.Optional;
+import java.util.List;
 
 import static com.triple.event.domain.event.QEvent.*;
 import static com.triple.event.domain.mileagehistory.QMileageHistory.*;
@@ -18,10 +17,10 @@ public class MileageHistoryRepositoryImpl implements MileageHistoryRepositoryCus
     }
 
     @Override
-    public Optional<MileageHistory> findMileageHistoryByTypeId(String typeId) {
-        return Optional.ofNullable(queryFactory.selectFrom(mileageHistory)
+    public List<MileageHistory> findAllByTypeId(String typeId) {
+        return queryFactory.selectFrom(mileageHistory)
                 .join(mileageHistory.event, event).fetchJoin()
                 .where(event.typeId.eq(typeId))
-                .fetchOne());
+                .fetch();
     }
 }

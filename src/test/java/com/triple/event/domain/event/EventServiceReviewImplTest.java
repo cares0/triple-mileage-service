@@ -232,6 +232,52 @@ class EventServiceReviewImplTest {
         assertThat(findMileage.getPoint()).isEqualTo(2); // 마일리지 총점
     }
 
+    @Test
+    @DisplayName("마일리지 수정 - 여러 번 수정할 경우")
+    public void 마일리지적립_MOD_여러번() throws Exception {
+        // given
+        User user = createUser();
+        Mileage mileage = createMileage(user);
+        Place place = createPlace();
+        Review review = createReview(user, place);
+
+        // 첫 리뷰 - 글만 작성
+        Event event = createEvent(review, EventAction.ADD);
+        eventServiceReviewImpl.add(mileage, place, event, "좋아요", new ArrayList<>());
+
+        // when
+        // 첫 번째 수정 - 사진만 작성
+        List<String> attachedPhotoIds = new ArrayList<>();
+        attachedPhotoIds.add("A");
+        attachedPhotoIds.add("B");
+        Event modEvent1 = createEvent(review, EventAction.MOD);
+        eventServiceReviewImpl.add(mileage, place, modEvent1, "", attachedPhotoIds);
+
+        // 두 번째 수정 - 글 + 사진
+        Event modEvent2 = createEvent(review, EventAction.MOD);
+        eventServiceReviewImpl.add(mileage, place, modEvent2, "좋아요", attachedPhotoIds);
+
+        // 세 번째 수정 - 글만 작성
+        Event modEvent3 = createEvent(review, EventAction.MOD);
+        eventServiceReviewImpl.add(mileage, place, modEvent3, "좋아요", new ArrayList<>());
+        em.flush();
+        em.clear();
+
+        Mileage findMileage = em.find(Mileage.class, mileage.getId());
+        List<MileageHistory> mileageHistories = findMileage.getMileageHistories();
+
+        // then
+        assertThat(mileageHistories.get(0).getModifiedPoint()).isEqualTo(2); // 이전 적립 이력
+        assertThat(mileageHistories.get(0).getContentPoint()).isEqualTo(1);
+        assertThat(mileageHistories.get(1).getModifiedPoint()).isEqualTo(0); // 첫 번째 수정 적립 이력
+        assertThat(mileageHistories.get(1).getContentPoint()).isEqualTo(1);
+        assertThat(mileageHistories.get(2).getModifiedPoint()).isEqualTo(1); // 두 번째 수정 적립 이력
+        assertThat(mileageHistories.get(2).getContentPoint()).isEqualTo(2);
+        assertThat(mileageHistories.get(3).getModifiedPoint()).isEqualTo(-1); // 세 번째 수정 적립 이력
+        assertThat(mileageHistories.get(3).getContentPoint()).isEqualTo(1);
+        assertThat(findMileage.getPoint()).isEqualTo(2); // 마일리지 총점
+    }
+
     private Event createEvent(Review review1, EventAction eventAction) {
         return Event.builder().eventType(EventType.REVIEW).eventAction(eventAction).typeId(review1.getId()).build();
     }

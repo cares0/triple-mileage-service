@@ -1,8 +1,8 @@
 package com.triple.event.domain.mileagehistory;
 
-import java.util.Optional;
+import java.util.List;
 
 public interface MileageHistoryRepositoryCustom {
 
-    Optional<MileageHistory> findMileageHistoryByTypeId(String typeId);
+    List<MileageHistory> findAllByTypeId(String typeId);
 }
