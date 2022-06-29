@@ -27,7 +27,7 @@ public class EventServiceReviewImpl implements EventService {
     private final MileageHistoryRepository mileageHistoryRepository;
     private final EventRepository eventRepository;
 
-    public void add(Mileage mileage, Place place, Event event, String content, List<String> attachedPhotoIds) {
+    public String add(Mileage mileage, Place place, Event event, String content, List<String> attachedPhotoIds) {
         // 이벤트 저장
         eventRepository.save(event);
         Integer bonusPoint = null;
@@ -73,6 +73,7 @@ public class EventServiceReviewImpl implements EventService {
                 getMileageHistory(event, mileage, place, previousPoint, modifyingFactor, bonusPoint);
         mileageHistory.updateMileage();
         mileageHistoryRepository.save(mileageHistory);
+        return mileageHistory.getId();
     }
 
     private int getPreviousPoint(MileageHistory previousHistory) {

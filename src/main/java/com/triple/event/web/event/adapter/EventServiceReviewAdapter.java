@@ -12,6 +12,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Component
 @Transactional
 @RequiredArgsConstructor
@@ -26,12 +29,21 @@ public class EventServiceReviewAdapter implements EventServiceAdapter {
     }
 
     @Override
-    public void adapt(EventRequest eventRequest, EventService eventService) {
+    public Map<String, String> adapt(EventRequest eventRequest, EventService eventService) {
         Mileage mileage = mileageService.getOneByUserId(eventRequest.getUserId());
         Place place = placeService.getOneById(eventRequest.getPlaceId());
         Event event = eventRequest.toEvent();
         EventServiceReviewImpl eventServiceReviewImpl = (EventServiceReviewImpl) eventService;
 
-        eventServiceReviewImpl.add(mileage, place, event, eventRequest.getContent(), eventRequest.getAttachedPhotoIds());
+        String mileageId = eventServiceReviewImpl.add(mileage, place, event,
+                eventRequest.getContent(), eventRequest.getAttachedPhotoIds());
+        return makeIdMap(event, mileageId);
+    }
+
+    private Map<String, String> makeIdMap(Event event, String mileageId) {
+        Map<String, String> idMap = new HashMap<>();
+        idMap.put("eventId", event.getId());
+        idMap.put("mileageId", mileageId);
+        return idMap;
     }
 }
