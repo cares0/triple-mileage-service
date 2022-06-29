@@ -6,5 +6,5 @@ public interface MileageRepositoryCustom {
 
     Optional<Mileage> findByUserId(String userId);
 
-    Optional<Mileage> findByIdWithUser(String mileageId);
+    Optional<Mileage> findByUserIdWithUser(String userId);
 }

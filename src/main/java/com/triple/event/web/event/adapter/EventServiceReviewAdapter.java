@@ -33,17 +33,18 @@ public class EventServiceReviewAdapter implements EventServiceAdapter {
         Mileage mileage = mileageQueryService.getOneByUserId(eventRequest.getUserId());
         Place place = placeService.getOneById(eventRequest.getPlaceId());
         Event event = eventRequest.toEvent();
+
         EventServiceReviewImpl eventServiceReviewImpl = (EventServiceReviewImpl) eventService;
 
-        String mileageId = eventServiceReviewImpl.add(mileage, place, event,
+        String mileageHistoryId = eventServiceReviewImpl.add(mileage, place, event,
                 eventRequest.getContent(), eventRequest.getAttachedPhotoIds());
-        return makeIdMap(event, mileageId);
+        return makeIdMap(event.getId(), mileageHistoryId);
     }
 
-    private Map<String, String> makeIdMap(Event event, String mileageId) {
+    private Map<String, String> makeIdMap(String eventId, String mileageHistoryId) {
         Map<String, String> idMap = new HashMap<>();
-        idMap.put("eventId", event.getId());
-        idMap.put("mileageId", mileageId);
+        idMap.put("eventId", eventId);
+        idMap.put("mileageHistoryId", mileageHistoryId);
         return idMap;
     }
 }

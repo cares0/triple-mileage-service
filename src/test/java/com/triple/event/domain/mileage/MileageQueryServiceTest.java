@@ -10,8 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 @SpringBootTest
 @Transactional
 class MileageQueryServiceTest {
@@ -23,14 +21,14 @@ class MileageQueryServiceTest {
     MileageQueryService mileageQueryService;
 
     @Test
-    @DisplayName("마일리지 아이디로 단건 조회 - 연관 유저 포함")
+    @DisplayName("마일리지 유저아이디로 단건 조회 - 연관 유저 포함")
     public void 마일리지단건조회_아이디로_유저포함() throws Exception {
         // given
         User user = createUser();
         Mileage mileage = createMileage(user);
 
         // when
-        Mileage findMileage = mileageQueryService.getOneByIdWithUser(mileage.getId());
+        Mileage findMileage = mileageQueryService.getOneByUserIdWithUser(user.getId());
 
         // then
         Assertions.assertThat(findMileage).isEqualTo(mileage);

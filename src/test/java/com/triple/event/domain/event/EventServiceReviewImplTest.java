@@ -308,8 +308,8 @@ class EventServiceReviewImplTest {
         assertThat(findMileage.getPoint()).isEqualTo(0); // 마일리지 총점
     }
 
-    private Event createEvent(Review review1, EventAction eventAction) {
-        return Event.builder().eventType(EventType.REVIEW).eventAction(eventAction).typeId(review1.getId()).build();
+    private Event createEvent(Review review, EventAction eventAction) {
+        return Event.builder().eventType(EventType.REVIEW).eventAction(eventAction).typeId(review.getId()).build();
     }
 
     private Review createReview(User user, Place place) {

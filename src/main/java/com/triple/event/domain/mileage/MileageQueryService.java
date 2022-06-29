@@ -17,8 +17,8 @@ public class MileageQueryService {
                 new EntityNotFoundException("해당 UserId를 가진 마일리지를 찾을 수 없음"));
     }
 
-    public Mileage getOneByIdWithUser(String mileageId) {
-        return mileageRepository.findByIdWithUser(mileageId).orElseThrow(() ->
-                new EntityNotFoundException("해당 MileageId를 가진 마일리지를 찾을 수 없음"));
+    public Mileage getOneByUserIdWithUser(String userId) {
+        return mileageRepository.findByUserIdWithUser(userId).orElseThrow(() ->
+                new EntityNotFoundException("해당 UserId를 가진 마일리지를 찾을 수 없음"));
     }
 }
