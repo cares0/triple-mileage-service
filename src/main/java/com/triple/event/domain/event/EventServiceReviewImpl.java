@@ -30,22 +30,18 @@ public class EventServiceReviewImpl implements EventService {
     public void add(Mileage mileage, Place place, Event event, String content, List<String> attachedPhotoIds) {
         // 이벤트 저장
         eventRepository.save(event);
+        Integer bonusPoint = null;
+        ModifyingFactor modifyingFactor = null;
+        Integer previousPoint = null;
 
         switch (event.getEventAction()) {
             case ADD:
                 // 첫 리뷰인 경우 보너스 포인트
-                Integer bonusPoint = getBonusPoint(place);
+                bonusPoint = getBonusPoint(place);
 
                 // 점수 변경 요인
-                ModifyingFactor modifyingFactor = getModifyingFactor(content, attachedPhotoIds);
-
-                Integer previousPoint = 0;
-
-                // Mileage 저장
-                MileageHistory mileageHistory =
-                        getMileageHistory(event, mileage, place, 0, modifyingFactor, bonusPoint);
-                mileageHistory.updateMileage();
-                mileageHistoryRepository.save(mileageHistory);
+                modifyingFactor = getModifyingFactor(content, attachedPhotoIds);
+                previousPoint = 0;
                 break;
             case MOD:
                 // 이전 이력 가져오기
@@ -59,12 +55,6 @@ public class EventServiceReviewImpl implements EventService {
 
                 // 점수 변경 요인 가져오기
                 modifyingFactor = getModifyingFactor(content, attachedPhotoIds);
-
-                // 변경 요인을 가지고 내용 점수 계산, 이전 이력에서 부여된 점수가지고 변경된 점수 계산, 마일리지 업데이트 후 저장
-                MileageHistory modifiedHistory =
-                        getMileageHistory(event, mileage, place, previousPoint, modifyingFactor, bonusPoint);
-                modifiedHistory.updateMileage();
-                mileageHistoryRepository.save(modifiedHistory);
                 break;
             case DELETE:
                 // 이전 이력 가져오기
@@ -76,12 +66,13 @@ public class EventServiceReviewImpl implements EventService {
 
                 // 이전 이력에서 부여된 총 점수 계산
                 previousPoint = getPreviousPoint(previousHistory);
-
-                // 로직 공통적으로 적용 가능
-                modifiedHistory = getMileageHistory(event, mileage, place, previousPoint, modifyingFactor, bonusPoint);
-                modifiedHistory.updateMileage();
-                mileageHistoryRepository.save(modifiedHistory);
         }
+
+        // 변경 요인을 가지고 내용 점수 계산, 이전 이력에서 부여된 점수가지고 변경된 점수 계산, 마일리지 업데이트 후 저장
+        MileageHistory mileageHistory =
+                getMileageHistory(event, mileage, place, previousPoint, modifyingFactor, bonusPoint);
+        mileageHistory.updateMileage();
+        mileageHistoryRepository.save(mileageHistory);
     }
 
     private int getPreviousPoint(MileageHistory previousHistory) {
