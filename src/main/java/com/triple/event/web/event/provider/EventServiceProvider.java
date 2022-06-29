@@ -1,5 +1,7 @@
-package com.triple.event.domain.event;
+package com.triple.event.web.event.provider;
 
+import com.triple.event.domain.event.EventService;
+import com.triple.event.domain.event.EventServiceReviewImpl;
 import com.triple.event.web.event.request.EventRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -24,6 +26,6 @@ public class EventServiceProvider {
                 return eventService;
             }
         }
-        throw new IllegalStateException("유효한 타입이 아님");
+        throw new IllegalArgumentException("유효한 타입이 아님");
     }
 }

@@ -6,5 +6,4 @@ public interface EventService {
 
     boolean support(EventRequest eventRequest);
 
-    void add(EventRequest eventRequest);
 }

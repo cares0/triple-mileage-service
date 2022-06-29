@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import java.util.List;
+
 import static com.triple.event.domain.event.PointCalculator.*;
 
 @Service
@@ -23,8 +25,6 @@ import static com.triple.event.domain.event.PointCalculator.*;
 public class EventServiceReviewImpl implements EventService {
 
     private final ReviewRepository reviewRepository;
-    private final MileageRepository mileageRepository;
-    private final PlaceRepository placeRepository;
     private final MileageHistoryRepository mileageHistoryRepository;
     private final EventRepository eventRepository;
 
@@ -33,27 +33,23 @@ public class EventServiceReviewImpl implements EventService {
         return eventRequest.getType() == EventType.REVIEW ? true : false;
     }
 
-    @Override
-    public void add(EventRequest eventRequest) {
+    public void add(Mileage mileage, Place place, Event event, String content, List<String> attachedPhotoIds) {
         // ADD
-        Mileage mileage = mileageRepository.findOptionalByUserId(eventRequest.getUserId()).orElseThrow(() ->
-                new EntityNotFoundException("해당 ID와 일치하는 회원을 찾을 수 없음"));
-        Place place = placeRepository.findById(eventRequest.getPlaceId()).orElseThrow(() ->
-                new EntityNotFoundException("해당 ID와 일치하는 장소를 찾을 수 없음"));
-        Event event = eventRequest.toEvent();
         eventRepository.save(event);
         // ====
 
-        switch (eventRequest.getAction()) {
+        switch (event.getEventAction()) {
             case ADD:
                 // 첫 리뷰인 경우 보너스 포인트
-                Integer bonusPoint = getBonusPoint(eventRequest);
+                Integer bonusPoint = getBonusPoint(place);
 
                 // 점수 변경 요인
-                ModifyingFactor modifyingFactor = getModifyingFactor(eventRequest);
+                ModifyingFactor modifyingFactor = getModifyingFactor(content, attachedPhotoIds);
 
                 // Event, Mileage 저장
-                saveMileageHistory(event, mileage, place, modifyingFactor, bonusPoint);
+                MileageHistory mileageHistory = getMileageHistory(event, mileage, place, modifyingFactor, bonusPoint);
+                mileageHistory.updateMileage();
+                mileageHistoryRepository.save(mileageHistory);
 
                 break;
             case MOD:
@@ -64,8 +60,8 @@ public class EventServiceReviewImpl implements EventService {
         }
     }
 
-    private Integer getBonusPoint(EventRequest eventRequest) {
-        Long reviewCount = reviewRepository.getCountByPlaceId(eventRequest.getPlaceId());
+    private Integer getBonusPoint(Place place) {
+        Long reviewCount = reviewRepository.getCountByPlaceId(place.getId());
         Integer bonusPoint = 0;
         if (reviewCount <= 1) {
             bonusPoint = 1;
@@ -73,11 +69,11 @@ public class EventServiceReviewImpl implements EventService {
         return bonusPoint;
     }
 
-    private ModifyingFactor getModifyingFactor(EventRequest eventRequest) {
+    private ModifyingFactor getModifyingFactor(String content, List<String> attachedPhotoIds) {
         ModifyingFactor modifyingFactor;
-        if (!eventRequest.getContent().isBlank() && !CollectionUtils.isEmpty(eventRequest.getAttachedPhotoIds())) {
+        if (!content.isBlank() && !CollectionUtils.isEmpty(attachedPhotoIds)) {
             modifyingFactor = ModifyingFactor.REVIEW_TEXT_AND_PHOTO;
-        } else if (!eventRequest.getContent().isBlank()) {
+        } else if (!content.isBlank()) {
             modifyingFactor = ModifyingFactor.REVIEW_TEXT;
         } else {
             modifyingFactor = ModifyingFactor.REVIEW_PHOTO;
@@ -85,18 +81,15 @@ public class EventServiceReviewImpl implements EventService {
         return modifyingFactor;
     }
 
-    private MileageHistory saveMileageHistory(Event event, Mileage mileage, Place place, ModifyingFactor modifyingFactor, Integer bonusPoint) {
-        MileageHistory mileageHistory = MileageHistory.builder()
+    private MileageHistory getMileageHistory(Event event, Mileage mileage, Place place, ModifyingFactor modifyingFactor, Integer bonusPoint) {
+        return MileageHistory.builder()
                 .event(event)
                 .mileage(mileage)
                 .modifyingFactor(modifyingFactor)
                 .contentPoint(getContentPoint(modifyingFactor))
                 .bonusPoint(bonusPoint)
-                .content(place.getName() + "에 리뷰를 작성했습니다.")
+                .placeName(place.getName())
                 .build();
-        mileageHistory.updateMileage();
-        mileageHistoryRepository.save(mileageHistory);
-        return mileageHistory;
     }
 
 }

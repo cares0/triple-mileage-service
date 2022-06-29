@@ -2,8 +2,8 @@ package com.triple.event.domain.mileagehistory;
 
 import com.triple.event.domain.common.BaseEntity;
 import com.triple.event.domain.event.Event;
+import com.triple.event.domain.event.EventAction;
 import com.triple.event.domain.mileage.Mileage;
-import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -43,7 +43,7 @@ public class MileageHistory extends BaseEntity {
     private String content;
 
     @Builder
-    public MileageHistory(Event event, Mileage mileage, Integer contentPoint, Integer bonusPoint, ModifyingFactor modifyingFactor, String content) {
+    public MileageHistory(Event event, Mileage mileage, Integer contentPoint, Integer bonusPoint, ModifyingFactor modifyingFactor, String placeName) {
         this.id = UUID.randomUUID().toString();
         this.event = event;
         this.mileage = mileage;
@@ -51,11 +51,21 @@ public class MileageHistory extends BaseEntity {
         this.contentPoint = contentPoint;
         this.bonusPoint = bonusPoint;
         this.modifyingFactor = modifyingFactor;
-        this.content = content;
+        if (event.getEventAction() == EventAction.ADD) {
+            this.content = placeName + "에 리뷰를 작성했습니다.";
+        } else if (event.getEventAction() == EventAction.MOD) {
+            this.content = placeName + "에 작성한 리뷰를 수정했습니다.";
+        } else {
+            this.content = placeName + "에 작성한 리뷰를 삭제했습니다.";
+        }
     }
 
     public void updateMileage() {
         mileage.updateMileage(modifiedPoint);
     }
 
+    public void editPoint(Integer contentPoint) {
+        this.contentPoint = contentPoint;
+        this.modifiedPoint = contentPoint;
+    }
 }
