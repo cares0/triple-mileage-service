@@ -8,6 +8,6 @@ import java.util.Optional;
 
 public interface MileageHistoryRepository extends JpaRepository<MileageHistory, String>, MileageHistoryRepositoryCustom {
 
-    @EntityGraph(attributePaths = {"clubmileage"})
+    @EntityGraph(attributePaths = {"event"})
     Optional<MileageHistory> findById(String mileageHistoryId);
 }

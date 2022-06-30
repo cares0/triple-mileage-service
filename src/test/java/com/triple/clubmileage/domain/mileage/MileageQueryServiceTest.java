@@ -22,7 +22,7 @@ class MileageQueryServiceTest {
     MileageQueryService mileageQueryService;
 
     @Test
-    @DisplayName("마일리지 유저아이디로 단건 조회 - 연관 유저 포함")
+    @DisplayName("마일리지 - 유저 아이디로 단건 조회 - 연관 유저 포함")
     public void 마일리지단건조회_아이디로_유저포함() throws Exception {
         // given
         User user = createUser();
@@ -37,7 +37,7 @@ class MileageQueryServiceTest {
     }
 
     @Test
-    @DisplayName("마일리지 유저 아이디로 단건 조회")
+    @DisplayName("마일리지 - 유저 아이디로 단건 조회")
     public void 마일리지단건조회_유저아이디로() throws Exception {
         // given
         User user = createUser();

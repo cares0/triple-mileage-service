@@ -8,6 +8,7 @@ import com.triple.clubmileage.domain.mileagehistory.service.MileageHistoryQueryS
 import com.triple.clubmileage.domain.place.Place;
 import com.triple.clubmileage.domain.review.Review;
 import com.triple.clubmileage.domain.user.User;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -30,6 +31,7 @@ class MileageHistoryQueryServiceTest {
     MileageHistoryQueryService mileageHistoryQueryService;
 
     @Test
+    @DisplayName("마일리지 이력 - 마일리지 아이디로 리스트 조회 - 페이징")
     public void 마일리지이력조회_페이징() throws Exception {
         // given
         User user = createUser();
@@ -37,7 +39,7 @@ class MileageHistoryQueryServiceTest {
         Place place = createPlace();
         Review review = createReview(user, place);
 
-        // 테스트를 위해 그냥 하나의 리뷰에 여러 마일리지가 적립되는 상황으로 가정함
+        // 테스트를 위해 그냥 하나의 리뷰로 여러 마일리지가 적립되는 상황으로 가정함
         for (int i = 0; i < 15; i++) {
             createEventAndHistory(review, mileage, i);
             Thread.sleep(500);
@@ -64,6 +66,7 @@ class MileageHistoryQueryServiceTest {
     }
 
     @Test
+    @DisplayName("마일리지 이력 - 아이디로 단건 조회")
     public void 마일리지이력조회_단건() throws Exception {
         // given
         User user = createUser();
@@ -83,7 +86,7 @@ class MileageHistoryQueryServiceTest {
         Event event = Event.builder().eventType(EventType.REVIEW).eventAction(EventAction.ADD).typeId(review.getId()).build();
         em.persist(event);
         MileageHistory mileageHistory = MileageHistory.builder().modifiedPoint(3).bonusPoint(bonusPoint).mileage(mileage).modifyingFactor(ModifyingFactor.FIRST_REVIEW)
-                .event(event).contentPoint(2).placeName("장소").build();
+                .event(event).contentPoint(2).content("내용").build();
         em.persist(mileageHistory);
         return mileageHistory;
     }

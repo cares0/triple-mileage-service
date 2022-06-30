@@ -46,7 +46,7 @@ public class MileageHistory extends BaseEntity implements Persistable<String> {
     private String content;
 
     @Builder
-    public MileageHistory(Event event, Mileage mileage, Integer modifiedPoint, Integer contentPoint, Integer bonusPoint, ModifyingFactor modifyingFactor, String placeName) {
+    public MileageHistory(Event event, Mileage mileage, Integer modifiedPoint, Integer contentPoint, Integer bonusPoint, ModifyingFactor modifyingFactor, String content) {
         this.id = UUID.randomUUID().toString();
         this.event = event;
         this.mileage = mileage;
@@ -54,21 +54,11 @@ public class MileageHistory extends BaseEntity implements Persistable<String> {
         this.contentPoint = contentPoint;
         this.bonusPoint = bonusPoint;
         this.modifyingFactor = modifyingFactor;
-        this.content = createContent(event, placeName);
+        this.content = content;
     }
 
     public void updateMileage() {
         mileage.updateMileage(modifiedPoint);
-    }
-
-    private String createContent(Event event, String placeName) {
-        if (event.getEventAction() == EventAction.ADD) {
-            return placeName + "에 리뷰를 작성했습니다.";
-        } else if (event.getEventAction() == EventAction.MOD) {
-            return placeName + "에 작성한 리뷰를 수정했습니다.";
-        } else {
-            return placeName + "에 작성한 리뷰를 삭제했습니다.";
-        }
     }
 
     @Override

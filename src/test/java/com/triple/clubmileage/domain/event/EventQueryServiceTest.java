@@ -7,6 +7,7 @@ import com.triple.clubmileage.domain.mileagehistory.ModifyingFactor;
 import com.triple.clubmileage.domain.place.Place;
 import com.triple.clubmileage.domain.review.Review;
 import com.triple.clubmileage.domain.user.User;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,6 +28,7 @@ class EventQueryServiceTest {
     EventQueryService eventQueryService;
 
     @Test
+    @DisplayName("이벤트 - 아이디로 단건 조회")
     public void 이벤트조회_단건() throws Exception {
         // given
         User user = createUser();
@@ -46,7 +48,7 @@ class EventQueryServiceTest {
         Event event = Event.builder().eventType(EventType.REVIEW).eventAction(EventAction.ADD).typeId(review.getId()).build();
         em.persist(event);
         MileageHistory mileageHistory = MileageHistory.builder().modifiedPoint(3).bonusPoint(bonusPoint).mileage(mileage).modifyingFactor(ModifyingFactor.FIRST_REVIEW)
-                .event(event).contentPoint(2).placeName("장소").build();
+                .event(event).contentPoint(2).content("내용").build();
         em.persist(mileageHistory);
         return event;
     }

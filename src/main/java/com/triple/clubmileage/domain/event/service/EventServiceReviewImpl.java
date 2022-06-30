@@ -2,6 +2,7 @@ package com.triple.clubmileage.domain.event.service;
 
 import com.triple.clubmileage.domain.event.Event;
 import com.triple.clubmileage.domain.event.repository.EventRepository;
+import com.triple.clubmileage.domain.event.util.PointCalculator;
 import com.triple.clubmileage.domain.exception.EntityNotFoundException;
 import com.triple.clubmileage.domain.mileage.Mileage;
 import com.triple.clubmileage.domain.mileagehistory.MileageHistory;
@@ -18,8 +19,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.triple.clubmileage.domain.event.util.PointCalculator.*;
-
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -28,6 +27,7 @@ public class EventServiceReviewImpl implements EventService {
     private final ReviewRepository reviewRepository;
     private final MileageHistoryRepository mileageHistoryRepository;
     private final EventRepository eventRepository;
+    private final PointCalculator pointCalculatorReviewImpl;
 
     public String add(Mileage mileage, Place place, Event event, String content, List<String> attachedPhotoIds) {
         // 이벤트 저장
@@ -35,6 +35,7 @@ public class EventServiceReviewImpl implements EventService {
         Integer bonusPoint = null;
         ModifyingFactor modifyingFactor = null;
         Integer previousPoint = null;
+        String historyContent = null;
 
         switch (event.getEventAction()) {
             case ADD:
@@ -44,6 +45,8 @@ public class EventServiceReviewImpl implements EventService {
                 // 점수 변경 요인
                 modifyingFactor = getModifyingFactor(content, attachedPhotoIds);
                 previousPoint = 0;
+
+                historyContent = place.getName() + "에 리뷰를 작성했습니다.";
                 break;
             case MOD:
                 // 이전 이력 가져오기
@@ -57,6 +60,8 @@ public class EventServiceReviewImpl implements EventService {
 
                 // 점수 변경 요인 가져오기
                 modifyingFactor = getModifyingFactor(content, attachedPhotoIds);
+
+                historyContent = place.getName() + "에 작성한 리뷰를 수정했습니다.";
                 break;
             case DELETE:
                 // 이전 이력 가져오기
@@ -68,11 +73,13 @@ public class EventServiceReviewImpl implements EventService {
 
                 // 이전 이력에서 부여된 총 점수 계산
                 previousPoint = getPreviousPoint(previousHistory);
+
+                historyContent = place.getName() + "에 작성한 리뷰를 삭제했습니다.";
         }
 
         // 변경 요인을 가지고 내용 점수 계산, 이전 이력에서 부여된 점수가지고 변경된 점수 계산, 마일리지 업데이트 후 저장
         MileageHistory mileageHistory =
-                getMileageHistory(event, mileage, place, previousPoint, modifyingFactor, bonusPoint);
+                createMileageHistory(event, mileage, previousPoint, modifyingFactor, bonusPoint, historyContent);
         mileageHistory.updateMileage();
         mileageHistoryRepository.save(mileageHistory);
         return mileageHistory.getId();
@@ -104,7 +111,7 @@ public class EventServiceReviewImpl implements EventService {
     }
 
     private ModifyingFactor getModifyingFactor(String content, List<String> attachedPhotoIds) {
-        // 클라이언트로부터 넘어온 내용과 사진ID 리스트만으로 판단, 따로 리뷰 테이블에서 데이터를 조회하진 않음(쿼리 한 번 덜나감)
+        // 클라이언트로부터 넘어온 내용과 사진ID 리스트만으로 판단, 따로 리뷰 테이블에서 데이터를 조회하진 않음(쿼리 한 번 덜 나감)
         ModifyingFactor modifyingFactor;
         if (!content.isBlank() && !CollectionUtils.isEmpty(attachedPhotoIds)) {
             modifyingFactor = ModifyingFactor.REVIEW_TEXT_AND_PHOTO;
@@ -116,18 +123,21 @@ public class EventServiceReviewImpl implements EventService {
         return modifyingFactor;
     }
 
-    private MileageHistory getMileageHistory(Event event, Mileage mileage, Place place,
-                                             Integer previousPoint, ModifyingFactor modifyingFactor,
-                                             Integer bonusPoint) {
+    private MileageHistory createMileageHistory(Event event, Mileage mileage,
+                                                Integer previousPoint, ModifyingFactor modifyingFactor,
+                                                Integer bonusPoint, String content) {
+
+        Integer contentPoint = pointCalculatorReviewImpl.getContentPoint(modifyingFactor);
+
         return MileageHistory.builder()
                 .event(event)
                 .mileage(mileage)
                 .modifyingFactor(modifyingFactor)
                 // 현재 상황에서의 내용 + 보너스점수에다가, 이전 이력에서의 내용 + 보너스점수를 빼서 변경분을 구함
-                .modifiedPoint((getContentPoint(modifyingFactor) + bonusPoint) - previousPoint)
-                .contentPoint(getContentPoint(modifyingFactor))
+                .modifiedPoint((contentPoint + bonusPoint) - previousPoint)
+                .contentPoint(contentPoint)
                 .bonusPoint(bonusPoint)
-                .placeName(place.getName())
+                .content(content)
                 .build();
     }
 
