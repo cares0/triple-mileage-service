@@ -63,6 +63,22 @@ class MileageHistoryQueryServiceTest {
         assertThat(result2.getContent().get(2).getBonusPoint()).isEqualTo(0);
     }
 
+    @Test
+    public void 마일리지이력조회_단건() throws Exception {
+        // given
+        User user = createUser();
+        Mileage mileage = createMileage(user);
+        Place place = createPlace();
+        Review review = createReview(user, place);
+        MileageHistory mileageHistory = createEventAndHistory(review, mileage, 1);
+
+        // when
+        MileageHistory findMileageHistory = mileageHistoryQueryService.getOneByIdWithEvent(mileageHistory.getId());
+
+        // then
+        assertThat(findMileageHistory).isEqualTo(mileageHistory);
+    }
+
     private MileageHistory createEventAndHistory(Review review, Mileage mileage, Integer bonusPoint) {
         Event event = Event.builder().eventType(EventType.REVIEW).eventAction(EventAction.ADD).typeId(review.getId()).build();
         em.persist(event);
