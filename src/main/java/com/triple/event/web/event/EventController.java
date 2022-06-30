@@ -5,11 +5,10 @@ import com.triple.event.web.event.adapter.EventServiceAdapter;
 import com.triple.event.web.event.provider.EventServiceAdapterProvider;
 import com.triple.event.web.event.provider.EventServiceProvider;
 import com.triple.event.web.event.request.EventRequest;
+import com.triple.event.web.event.response.EventDetailResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -20,8 +19,10 @@ public class EventController {
 
     private final EventServiceProvider eventServiceProvider;
     private final EventServiceAdapterProvider eventServiceAdapterProvider;
+    private final EventQueryService eventQueryService;
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public Map<String, String> eventAdd(@RequestBody EventRequest eventRequest) {
         // EventType에 맞는 서비스 구현체를 찾아옴
         EventService eventService = eventServiceProvider.getEventService(eventRequest);
@@ -31,6 +32,12 @@ public class EventController {
 
         // 어댑터를 통해 로직 수행
         return eventServiceAdapter.adapt(eventRequest, eventService);
+    }
+
+    @GetMapping("/{eventId}")
+    public EventDetailResponse eventDetail(@PathVariable String eventId) {
+        Event event = eventQueryService.getOneById(eventId);
+        return EventDetailResponse.toResponse(event);
     }
 
 }
