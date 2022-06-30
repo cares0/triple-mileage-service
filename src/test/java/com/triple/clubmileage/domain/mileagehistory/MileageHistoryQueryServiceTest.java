@@ -42,7 +42,7 @@ class MileageHistoryQueryServiceTest {
         // 테스트를 위해 그냥 하나의 리뷰로 여러 마일리지가 적립되는 상황으로 가정함
         for (int i = 0; i < 15; i++) {
             createEventAndHistory(review, mileage, i);
-            Thread.sleep(500);
+            Thread.sleep(50);
         }
         em.flush();
         em.clear();
@@ -85,7 +85,8 @@ class MileageHistoryQueryServiceTest {
     private MileageHistory createEventAndHistory(Review review, Mileage mileage, Integer bonusPoint) {
         Event event = Event.builder().eventType(EventType.REVIEW).eventAction(EventAction.ADD).typeId(review.getId()).build();
         em.persist(event);
-        MileageHistory mileageHistory = MileageHistory.builder().modifiedPoint(3).bonusPoint(bonusPoint).mileage(mileage).modifyingFactor(ModifyingFactor.FIRST_REVIEW)
+        MileageHistory mileageHistory = MileageHistory.builder().modifiedPoint(3).bonusPoint(bonusPoint)
+                .mileage(mileage).modifyingFactor(ModifyingFactor.FIRST_REVIEW)
                 .event(event).contentPoint(2).content("내용").build();
         em.persist(mileageHistory);
         return mileageHistory;

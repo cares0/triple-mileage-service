@@ -47,7 +47,8 @@ class EventQueryServiceTest {
     private Event createEventAndHistory(Review review, Mileage mileage, Integer bonusPoint) {
         Event event = Event.builder().eventType(EventType.REVIEW).eventAction(EventAction.ADD).typeId(review.getId()).build();
         em.persist(event);
-        MileageHistory mileageHistory = MileageHistory.builder().modifiedPoint(3).bonusPoint(bonusPoint).mileage(mileage).modifyingFactor(ModifyingFactor.FIRST_REVIEW)
+        MileageHistory mileageHistory = MileageHistory.builder().modifiedPoint(3).bonusPoint(bonusPoint)
+                .mileage(mileage).modifyingFactor(ModifyingFactor.FIRST_REVIEW)
                 .event(event).contentPoint(2).content("내용").build();
         em.persist(mileageHistory);
         return event;

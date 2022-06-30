@@ -14,7 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -63,7 +65,9 @@ class EventServiceReviewImplTest {
         em.clear();
 
         Mileage findMileage = em.find(Mileage.class, mileage.getId());
-        List<MileageHistory> mileageHistories = findMileage.getMileageHistories();
+        List<MileageHistory> result = findMileage.getMileageHistories();
+        List<MileageHistory> mileageHistories = result.stream()
+                .sorted(Comparator.comparing(MileageHistory::getCreatedDate)).collect(Collectors.toList());
 
         // then
         assertThat(mileageHistories.get(0).getModifiedPoint()).isEqualTo(2); // 글만 작성
@@ -124,7 +128,9 @@ class EventServiceReviewImplTest {
         em.clear();
 
         Mileage findMileage = em.find(Mileage.class, mileage.getId());
-        List<MileageHistory> mileageHistories = findMileage.getMileageHistories();
+        List<MileageHistory> result = findMileage.getMileageHistories();
+        List<MileageHistory> mileageHistories = result.stream()
+                .sorted(Comparator.comparing(MileageHistory::getCreatedDate)).collect(Collectors.toList());
 
         // then
         assertThat(mileageHistories.get(0).getModifiedPoint()).isEqualTo(1); // 글만 작성
@@ -159,8 +165,9 @@ class EventServiceReviewImplTest {
         em.clear();
 
         Mileage findMileage = em.find(Mileage.class, mileage.getId());
-        List<MileageHistory> mileageHistories = findMileage.getMileageHistories();
-
+        List<MileageHistory> result = findMileage.getMileageHistories();
+        List<MileageHistory> mileageHistories = result.stream()
+                .sorted(Comparator.comparing(MileageHistory::getCreatedDate)).collect(Collectors.toList());
         // then
         assertThat(mileageHistories.get(0).getModifiedPoint()).isEqualTo(2); // 이전 적립 이력
         assertThat(mileageHistories.get(1).getModifiedPoint()).isEqualTo(1); // 새로 생성된 적립 이력
@@ -192,7 +199,9 @@ class EventServiceReviewImplTest {
         em.clear();
 
         Mileage findMileage = em.find(Mileage.class, mileage.getId());
-        List<MileageHistory> mileageHistories = findMileage.getMileageHistories();
+        List<MileageHistory> result = findMileage.getMileageHistories();
+        List<MileageHistory> mileageHistories = result.stream()
+                .sorted(Comparator.comparing(MileageHistory::getCreatedDate)).collect(Collectors.toList());
 
         // then
         assertThat(mileageHistories.get(0).getModifiedPoint()).isEqualTo(3); // 이전 적립 이력
@@ -225,7 +234,9 @@ class EventServiceReviewImplTest {
         em.clear();
 
         Mileage findMileage = em.find(Mileage.class, mileage.getId());
-        List<MileageHistory> mileageHistories = findMileage.getMileageHistories();
+        List<MileageHistory> result = findMileage.getMileageHistories();
+        List<MileageHistory> mileageHistories = result.stream()
+                .sorted(Comparator.comparing(MileageHistory::getCreatedDate)).collect(Collectors.toList());
 
         // then
         assertThat(mileageHistories.get(0).getModifiedPoint()).isEqualTo(2); // 이전 적립 이력
@@ -265,7 +276,9 @@ class EventServiceReviewImplTest {
         em.clear();
 
         Mileage findMileage = em.find(Mileage.class, mileage.getId());
-        List<MileageHistory> mileageHistories = findMileage.getMileageHistories();
+        List<MileageHistory> result = findMileage.getMileageHistories();
+        List<MileageHistory> mileageHistories = result.stream()
+                .sorted(Comparator.comparing(MileageHistory::getCreatedDate)).collect(Collectors.toList());
 
         // then
         assertThat(mileageHistories.get(0).getModifiedPoint()).isEqualTo(2); // 리뷰 처음 등록했을 때 적립 이력
@@ -301,7 +314,9 @@ class EventServiceReviewImplTest {
         em.clear();
 
         Mileage findMileage = em.find(Mileage.class, mileage.getId());
-        List<MileageHistory> mileageHistories = findMileage.getMileageHistories();
+        List<MileageHistory> result = findMileage.getMileageHistories();
+        List<MileageHistory> mileageHistories = result.stream()
+                .sorted(Comparator.comparing(MileageHistory::getCreatedDate)).collect(Collectors.toList());
 
         // then
         assertThat(mileageHistories.get(0).getModifiedPoint()).isEqualTo(2); // 리뷰 작성 시 적립 이력
