@@ -4,6 +4,7 @@ import com.triple.clubmileage.domain.event.Event;
 import com.triple.clubmileage.domain.event.repository.EventRepository;
 import com.triple.clubmileage.domain.event.util.PointCalculator;
 import com.triple.clubmileage.domain.exception.EntityNotFoundException;
+import com.triple.clubmileage.domain.exception.InvalidRequestDataException;
 import com.triple.clubmileage.domain.mileage.Mileage;
 import com.triple.clubmileage.domain.mileagehistory.MileageHistory;
 import com.triple.clubmileage.domain.mileagehistory.repository.MileageHistoryRepository;
@@ -117,8 +118,10 @@ public class EventServiceReviewImpl implements EventService {
             modifyingFactor = ModifyingFactor.REVIEW_TEXT_AND_PHOTO;
         } else if (!content.isBlank()) {
             modifyingFactor = ModifyingFactor.REVIEW_TEXT;
-        } else {
+        } else if (!CollectionUtils.isEmpty(attachedPhotoIds)){
             modifyingFactor = ModifyingFactor.REVIEW_PHOTO;
+        } else {
+            throw new InvalidRequestDataException("content, attachedPhotoIds 필드 중 하나의 필드는 무조건 필수여야 합니다.");
         }
         return modifyingFactor;
     }

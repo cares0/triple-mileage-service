@@ -28,6 +28,6 @@ public class EventServiceAdapterProvider {
                 return eventServiceAdapter;
             }
         }
-        throw new AdapterNotFoundException("맞는 어댑터를 찾을 수 없음");
+        throw new AdapterNotFoundException("해당 EventService와 맞는 어댑터를 찾을 수 없음");
     }
 }
