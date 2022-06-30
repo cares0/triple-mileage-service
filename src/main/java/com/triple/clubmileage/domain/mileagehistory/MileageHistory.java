@@ -26,20 +26,24 @@ public class MileageHistory extends BaseEntity implements Persistable<String> {
     private String id;
 
     @OneToOne(fetch = LAZY)
-    @JoinColumn(name = "event_id")
+    @JoinColumn(name = "event_id", nullable = false)
     private Event event;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "mileage_id")
+    @JoinColumn(name = "mileage_id", nullable = false)
     private Mileage mileage;
 
+    @Column(nullable = false)
     private Integer modifiedPoint;
 
+    @Column(nullable = false)
     private Integer contentPoint;
 
+    @Column(nullable = false)
     private Integer bonusPoint;
 
     @Enumerated(value = STRING)
+    @Column(nullable = false)
     private ModifyingFactor modifyingFactor;
 
     private String content;

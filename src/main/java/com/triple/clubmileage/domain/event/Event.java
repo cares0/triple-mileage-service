@@ -22,12 +22,15 @@ public class Event extends BaseEntity implements Persistable<String> {
     @Column(name = "event_id")
     private String id;
 
+    @Column(nullable = false)
     private String typeId;
 
     @Enumerated(value = STRING)
+    @Column(nullable = false)
     private EventAction eventAction;
 
     @Enumerated(value = STRING)
+    @Column(nullable = false)
     private EventType eventType;
 
     @Builder

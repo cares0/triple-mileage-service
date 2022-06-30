@@ -26,12 +26,13 @@ public class Mileage extends BaseEntity {
     private String id;
 
     @OneToOne(fetch = LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @OneToMany(mappedBy = "mileage")
     private List<MileageHistory> mileageHistories = new ArrayList<>();
 
+    @Column(nullable = false)
     private Integer point;
 
     @Builder
