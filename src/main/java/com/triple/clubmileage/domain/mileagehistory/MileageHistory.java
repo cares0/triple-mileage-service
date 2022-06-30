@@ -2,7 +2,6 @@ package com.triple.clubmileage.domain.mileagehistory;
 
 import com.triple.clubmileage.domain.common.BaseEntity;
 import com.triple.clubmileage.domain.event.Event;
-import com.triple.clubmileage.domain.event.EventAction;
 import com.triple.clubmileage.domain.mileage.Mileage;
 import lombok.Builder;
 import lombok.Getter;
