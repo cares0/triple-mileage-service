@@ -38,24 +38,33 @@
 
 ___
 
+<br/>
+
 ## **1. 애플리케이션 실행 방법**
 
 > ### 1) 직접 애플리케이션을 테스트하는 경우
 
 > ### 2) 배포된 애플리케이션을 테스트하는 경우
 
+<br/>
+
 ___
+
+<br/>
+
 ## **2. 프로젝트 설계**
 
-> ### 1) E-R 다이어그램
+> ### **1) E-R 다이어그램**
 ![E-R Diagram](https://user-images.githubusercontent.com/97069541/176802230-9d749926-460b-4ba9-8f8e-2f3e0a66021a.jpg)
+
 <br/>
 
-> ### 2) 테이블 모델
+> ### **2) 테이블 모델**
 ![table-structure](https://user-images.githubusercontent.com/97069541/176828773-d787f10e-9129-418d-9f9e-f3b2272277c4.jpg)
+
 <br/>
 
-> ### 3) DDL
+> ### **3) DDL**
 * 물리적으로 FK는 지정하지 않았습니다.
 ```sql
 create table event
@@ -139,22 +148,21 @@ create table review_photo
 );
 create index review_photo_review_id_idx on review_photo (review_id);
 ```
+
 <br/>
 
-> ### 4) REST API 스펙
+> ### **4) REST API 스펙**
 | Method | URI                                     | Description        | Query String                              |
 |:-------|:----------------------------------------|:-------------------|:------------------------------------------|
 | GET    | /users/{userId}/mileages                | 유저의 마일리지 조회        | X                                         |
-|
 | GET    | /mileages/{mileageId}/mileage-histories | 마일리지의 이력 리스트 조회    | size, page, startDate, endDate, eventType |
-|
 | GET    | /mileage-histories/{mileageHistoryId}   | 마일리지 이력 단건 조회      |                                           |
-|
 | POST   | /events                                 | 이벤트 등록, 마일리지 이력 등록 | X                                         |
 | GET    | /events/{eventId}                       | 이벤트 단건 조회          | X                                         |
+
 <br/>
 
-1. `/users/{userId}/mileages`
+### 1. `/users/{userId}/mileages`
 * 응답 데이터 예시
 ```json
 {
@@ -168,7 +176,7 @@ create index review_photo_review_id_idx on review_photo (review_id);
 ```
 <br/>
 
-2. `/mileages/{mileageId}/mileage-histories`
+### 2. `/mileages/{mileageId}/mileage-histories`
 * 응답 데이터 예시
 ```json
 {
@@ -228,7 +236,7 @@ create index review_photo_review_id_idx on review_photo (review_id);
 ```
 <br/>
 
-3. `/mileage-histories/{mileageHistoryId}`
+### 3. `/mileage-histories/{mileageHistoryId}`
 * 응답 데이터 예시
 ```json
 {
@@ -248,7 +256,7 @@ create index review_photo_review_id_idx on review_photo (review_id);
 ```
 <br/>
 
-4. `/events`
+### 4. `/events`
 * 요청 데이터 예시
 ```json
 {
@@ -270,7 +278,7 @@ create index review_photo_review_id_idx on review_photo (review_id);
 ```
 <br/>
 
-5. `/events/{eventId}`
+### 5. `/events/{eventId}`
 * 응답 데이터 예시
 ```json
 {
@@ -282,7 +290,7 @@ create index review_photo_review_id_idx on review_photo (review_id);
 ```
 <br/>
 
-> ### 5) 프로젝트 구조
+> ### **5) 프로젝트 구조**
 ![project-structure](https://user-images.githubusercontent.com/97069541/176664348-7e2dcf80-99b2-40db-9623-a158064cd59a.jpg)
 
 **웹 계층과 도메인 계층을 분리**
@@ -310,7 +318,12 @@ create index review_photo_review_id_idx on review_photo (review_id);
         * 공통 패키지
         * 예외 패키지
 
+<br/>
+
 ___
+
+<br/>
+
 ## 프로젝트 구현
 
 
