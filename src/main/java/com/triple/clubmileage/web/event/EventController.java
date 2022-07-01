@@ -8,17 +8,13 @@ import com.triple.clubmileage.web.event.provider.EventServiceAdapterProvider;
 import com.triple.clubmileage.web.event.provider.EventServiceProvider;
 import com.triple.clubmileage.web.event.request.EventRequest;
 import com.triple.clubmileage.web.event.response.EventDetailResponse;
-import com.triple.clubmileage.web.exception.ValidationFailException;
 import com.triple.clubmileage.web.util.ValidationUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -44,7 +40,7 @@ public class EventController {
         EventServiceAdapter eventServiceAdapter = eventServiceAdapterProvider.getEventServiceAdapter(eventService);
 
         // 어댑터를 통해 로직 수행
-        return eventServiceAdapter.adapt(eventRequest, eventService);
+        return eventServiceAdapter.add(eventRequest, eventService);
     }
 
     @GetMapping("/{eventId}")

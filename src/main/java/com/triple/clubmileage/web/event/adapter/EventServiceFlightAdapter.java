@@ -21,7 +21,7 @@ public class EventServiceFlightAdapter implements EventServiceAdapter {
     }
 
     @Override
-    public Map<String, String> adapt(EventRequest eventRequest, EventService eventService) {
+    public Map<String, String> add(EventRequest eventRequest, EventService eventService) {
         log.info("[구현체: {}, EventType이 FLIGHT일 경우 여기서 처리]", eventService.getClass());
         EventServiceFlightImpl eventServiceFlightImpl = (EventServiceFlightImpl) eventService;
         // 원하는 파라미터로 로직 처리 후 정해진 리턴 타입으로 맞춰서 반환

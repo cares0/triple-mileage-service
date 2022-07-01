@@ -9,6 +9,6 @@ public interface EventServiceAdapter {
 
     boolean support(EventService eventService);
 
-    Map<String, String> adapt(EventRequest eventRequest, EventService eventService);
+    Map<String, String> add(EventRequest eventRequest, EventService eventService);
 
 }

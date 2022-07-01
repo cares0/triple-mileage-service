@@ -6,7 +6,7 @@ import com.triple.clubmileage.domain.event.service.EventServiceReviewImpl;
 import com.triple.clubmileage.domain.mileage.Mileage;
 import com.triple.clubmileage.domain.mileage.service.MileageQueryService;
 import com.triple.clubmileage.domain.place.Place;
-import com.triple.clubmileage.domain.place.service.PlaceService;
+import com.triple.clubmileage.domain.place.service.PlaceQueryService;
 import com.triple.clubmileage.web.event.request.EventRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -21,7 +21,7 @@ import java.util.Map;
 public class EventServiceReviewAdapter implements EventServiceAdapter {
 
     private final MileageQueryService mileageQueryService;
-    private final PlaceService placeService;
+    private final PlaceQueryService placeQueryService;
 
     @Override
     public boolean support(EventService eventService) {
@@ -29,9 +29,9 @@ public class EventServiceReviewAdapter implements EventServiceAdapter {
     }
 
     @Override
-    public Map<String, String> adapt(EventRequest eventRequest, EventService eventService) {
+    public Map<String, String> add(EventRequest eventRequest, EventService eventService) {
         Mileage mileage = mileageQueryService.getOneByUserId(eventRequest.getUserId());
-        Place place = placeService.getOneById(eventRequest.getPlaceId());
+        Place place = placeQueryService.getOneById(eventRequest.getPlaceId());
         Event event = eventRequest.toEvent();
 
         EventServiceReviewImpl eventServiceReviewImpl = (EventServiceReviewImpl) eventService;
