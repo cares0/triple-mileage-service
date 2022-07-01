@@ -2,6 +2,7 @@ package com.triple.clubmileage.web.event.provider;
 
 import com.triple.clubmileage.domain.event.service.EventService;
 import com.triple.clubmileage.web.event.adapter.EventServiceAdapter;
+import com.triple.clubmileage.web.event.adapter.EventServiceFlightAdapter;
 import com.triple.clubmileage.web.event.adapter.EventServiceReviewAdapter;
 import com.triple.clubmileage.web.exception.AdapterNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +17,11 @@ public class EventServiceAdapterProvider {
     private final List<EventServiceAdapter> eventServiceAdapters;
 
     @Autowired
-    public EventServiceAdapterProvider(EventServiceReviewAdapter eventServiceReviewAdapter) {
+    public EventServiceAdapterProvider(EventServiceReviewAdapter eventServiceReviewAdapter,
+                                       EventServiceFlightAdapter eventServiceFlightAdapter) {
         List<EventServiceAdapter> eventServiceAdapterList = new ArrayList<>();
         eventServiceAdapterList.add(eventServiceReviewAdapter);
+        eventServiceAdapterList.add(eventServiceFlightAdapter);
         this.eventServiceAdapters = eventServiceAdapterList;
     }
 
