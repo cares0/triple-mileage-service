@@ -4,6 +4,7 @@ import com.triple.clubmileage.domain.event.Event;
 import com.triple.clubmileage.domain.event.EventAction;
 import com.triple.clubmileage.domain.event.EventType;
 import com.triple.clubmileage.domain.mileage.Mileage;
+import com.triple.clubmileage.domain.mileage.service.MileageCondition;
 import com.triple.clubmileage.domain.mileagehistory.service.MileageHistoryQueryService;
 import com.triple.clubmileage.domain.place.Place;
 import com.triple.clubmileage.domain.review.Review;
@@ -49,9 +50,11 @@ class MileageHistoryQueryServiceTest {
 
         // when
         PageRequest pageRequest1 = PageRequest.of(0, 3);
-        Page<MileageHistory> result1 = mileageHistoryQueryService.getPageByMileageIdWithEvent(mileage.getId(), pageRequest1);
+        Page<MileageHistory> result1 = mileageHistoryQueryService
+                .getPageByMileageIdWithEvent(mileage.getId(), pageRequest1, MileageCondition.builder().build());
         PageRequest pageRequest2 = PageRequest.of(2, 6);
-        Page<MileageHistory> result2 = mileageHistoryQueryService.getPageByMileageIdWithEvent(mileage.getId(), pageRequest2);
+        Page<MileageHistory> result2 = mileageHistoryQueryService
+                .getPageByMileageIdWithEvent(mileage.getId(), pageRequest2, MileageCondition.builder().build());
 
         // then
         assertThat(result1.getContent().size()).isEqualTo(3);
@@ -63,6 +66,41 @@ class MileageHistoryQueryServiceTest {
         assertThat(result2.getContent().get(0).getBonusPoint()).isEqualTo(2);
         assertThat(result2.getContent().get(1).getBonusPoint()).isEqualTo(1);
         assertThat(result2.getContent().get(2).getBonusPoint()).isEqualTo(0);
+    }
+
+    @Test
+    @DisplayName("마일리지 이력 - 마일리지 아이디로 리스트 조회 - 조건")
+    public void 마일리지이력조회_조건() throws Exception {
+        // given
+        User user = createUser();
+        Mileage mileage = createMileage(user);
+        Place place = createPlace();
+        Review review = createReview(user, place);
+
+        // 테스트를 위해 그냥 하나의 리뷰로 여러 마일리지가 적립되는 상황으로 가정함
+        for (int i = 0; i < 15; i++) {
+            createEventAndHistory(review, mileage, i);
+            Thread.sleep(50);
+        }
+        em.flush();
+        em.clear();
+
+        // when
+        PageRequest pageRequest = PageRequest.of(0, 3);
+        Page<MileageHistory> reviewResult = mileageHistoryQueryService
+                .getPageByMileageIdWithEvent(mileage.getId(), pageRequest,
+                        MileageCondition.builder().eventType(EventType.REVIEW).build());
+        Page<MileageHistory> flightResult = mileageHistoryQueryService
+                .getPageByMileageIdWithEvent(mileage.getId(), pageRequest,
+                        MileageCondition.builder().eventType(EventType.FLIGHT).build());
+
+        // then
+        assertThat(reviewResult.getContent().size()).isEqualTo(3);
+        assertThat(reviewResult.getContent().get(0).getBonusPoint()).isEqualTo(14);
+        assertThat(reviewResult.getContent().get(1).getBonusPoint()).isEqualTo(13);
+        assertThat(reviewResult.getContent().get(2).getBonusPoint()).isEqualTo(12);
+
+        assertThat(flightResult.getContent().size()).isEqualTo(0);
     }
 
     @Test

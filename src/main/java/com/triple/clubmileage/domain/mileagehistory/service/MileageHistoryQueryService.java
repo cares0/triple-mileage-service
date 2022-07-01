@@ -1,6 +1,7 @@
 package com.triple.clubmileage.domain.mileagehistory.service;
 
 import com.triple.clubmileage.domain.exception.EntityNotFoundException;
+import com.triple.clubmileage.domain.mileage.service.MileageCondition;
 import com.triple.clubmileage.domain.mileagehistory.MileageHistory;
 import com.triple.clubmileage.domain.mileagehistory.repository.MileageHistoryRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,8 +17,8 @@ public class MileageHistoryQueryService {
 
     private final MileageHistoryRepository mileageHistoryRepository;
 
-    public Page<MileageHistory> getPageByMileageIdWithEvent(String mileageId, Pageable pageable) {
-        return mileageHistoryRepository.findPageByMileageIdWithEvent(mileageId, pageable);
+    public Page<MileageHistory> getPageByMileageIdWithEvent(String mileageId, Pageable pageable, MileageCondition mileageCondition) {
+        return mileageHistoryRepository.findPageByMileageIdWithEvent(mileageId, pageable, mileageCondition);
     }
 
     public MileageHistory getOneByIdWithEvent(String mileageHistoryId) {
