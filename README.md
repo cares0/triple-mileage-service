@@ -1,6 +1,11 @@
 # Triple Club Mileage Service
 
+<br/>
+
 ## **목차**
+
+<br/>
+
 ### 1. 애플리케이션 실행 방법
 &nbsp;&nbsp; 1) 직접 애플리케이션을 테스트하는 경우  
 &nbsp;&nbsp; 2) 배포된 애플리케이션을 테스트하는 경우
@@ -14,25 +19,34 @@
 <br/>
 
 ## **들어가기 전에**
-1. 다른 서버에서 리뷰가 등록된 다음에 이 애플리케이션으로 이벤트 등록 정보가 넘어온다고 가정합니다.
+
+<br/>
+
+1. **다른 서버에서 리뷰가 등록된 다음에 이 애플리케이션으로 이벤트 등록 정보가 넘어온다고 가정합니다.**
    * 리뷰 등록은 다른 서버에서 처리한다고 가정했기에 구현하지 않았습니다.
    * 리뷰가 등록되어 있어야 이벤트도 등록이 가능합니다.
 
    <br/>
 
-2. 리뷰는 아래의 경우로 등록될 수 있다고 가정했습니다.
+2. **리뷰는 아래의 경우로 등록될 수 있다고 가정했습니다.**
     * 글만 작성하는 경우
     * 사진만 등록하는 경우
     * 글과 사진 모두 등록하는 경우
 
    <br/>
 
-3. 이벤트의 타입은 리뷰 뿐만 아니라 다른 타입도 가능할 것을 고려했습니다.
+3. **이벤트의 타입은 리뷰 뿐만 아니라 다른 타입도 가능할 것을 고려했습니다.**
    * 이벤트 타입의 확장성을 고려하여 구현했습니다.
    * 각 타입별로 처리해야 할 로직이 다르다고 가정합니다.
    * 예시를 위해 이 애플리케이션에서는 항공 예약시 발생하는 이벤트도 있다고 가정했습니다.
    * 항공 예약 시 발생하는 이벤트 등록과 적립 로직은 구현하지 않고, 프로젝트 구조만 구현했습니다.
 
+    <br/>
+   
+4. **발생하기 힘든 버그는 어느정도 배제했습니다.**
+   * 예를 들어, 리뷰가 등록될 경우 무조건 단 한번만 ADD 이벤트가 발생한다고 가정했습니다.
+   * 따라서 동일 리뷰에 대해 ADD 이벤트가 2번 발생할 경우는 예외를 발생시키지 않습니다.
+   * 예외를 배제했을 경우 쿼리 최적화가 가능해지는 경우에만 적용했습니다.
 
 <br>
 
@@ -42,9 +56,142 @@ ___
 
 ## **1. 애플리케이션 실행 방법**
 
-> ### 1) 직접 애플리케이션을 테스트하는 경우
+> ### **1) 직접 애플리케이션을 테스트하는 경우**
 
-> ### 2) 배포된 애플리케이션을 테스트하는 경우
+
+> ### **2) 배포된 애플리케이션을 테스트하는 경우**
+애플리케이션을 EC2를 통해 배포해놓았습니다.  
+주소 : 
+
+Postman을 통해서 테스트 하는 것을 권장드립니다.
+
+<br/>
+
+### 더미 데이터 설명
+테스트를 위해 더미데이터를 넣어놨고, 식별자는 아래와 같습니다.
+
+| 회원  | 회원 ID                                | 마일리지 ID                              |
+|:----|:-------------------------------------|:-------------------------------------|
+| 유저1 | 96927c62-6cdb-4918-91fe-8b01d348d33f | 2119445e-9b19-456c-ae46-90e1d1f19363 | 
+| 유저2 | 3c4dd476-39c2-4cf7-ad91-4872c7629b84 | 3ed33b34-76e9-4557-b8d0-5e59eeeede8c |
+
+| 장소 이름 | 장소 ID                                |
+|:------|:-------------------------------------|
+| 장소1   | 83a0d51c-a508-4330-8dd0-fb1576bffbcb |
+| 장소2   | cdc09e7e-7467-4226-99bf-36269b8c54c7 |
+| 장소3   | 2472f4f4-41a5-4c10-bf85-fcebf41fc4e8 |
+
+| 유저가 작성한 리뷰     | 리뷰 ID                                | 이벤트 등록 여부 |
+|:---------------|:-------------------------------------|:----------|
+| 유저1의 리뷰1 - 장소1 | b8ef60da-cfe8-4c30-a044-ccb39e3431b6 | 등록 완료     |
+| 유저1의 리뷰2 - 장소2 | 798a6c0d-5b2b-46e7-8ea8-05d6240008a2 | 등록 완료     |
+| 유저1의 리뷰3 - 장소3 | 676c4648-498e-426f-a88d-5bbc648d074c | 등록 X      |
+| 유저2의 리뷰1 - 장소1 | cc65772f-f05b-4c07-9e27-c03d42035860 | 등록 X      |
+| 유저2의 리뷰2 - 장소2 | 3aeec395-ee1a-4dbe-9ab5-19e08ed7b395 | 등록 X      |
+
+리뷰 등록, 수정, 삭제는 다른 서버에서 진행하게 되고 발생한 이벤트에 대해서만 이 서버로 들어온다고 설정했습니다.  
+따라서 테스트를 위해 리뷰 데이터를 5개 미리 DB에 등록해놨습니다.
+
+* 회원이 2명 존재하고, 장소1, 장소2에 대해 각 회원마다 리뷰를 한 개씩 작성해 놓은 상황입니다.
+* 회원1의 경우에는 리뷰1과, 리뷰2에 대한 이벤트를 발생시켜 마일리지 이력을 10개 만들어 놓았습니다.
+* 회원2의 경우에는 리뷰는 등록되어 있지만, 이벤트를 발생시키지 않아 마일리지 이력은 없습니다.
+* 회원1의 리뷰3은 장소3에 대한 리뷰이며, 이벤트를 발생시키지 않아 마일리지 이력은 없습니다.  
+  (첫 리뷰 작성 시 보너스 포인트가 적용되는지 테스트 하기 위한 데이터입니다.)
+
+<br/>
+
+### 1. 조회 API 테스트 (자세한 사항은 2-4. REST API 스펙을 참고해주세요.)
+
+&nbsp;&nbsp; 1) 회원1의 ID를 `/users/{userId}/mileages` 로 경로변수에 넣어 요청을 보냅니다.
+* 회원1의 마일리지 정보가 응답됩니다.
+
+<br/>
+
+&nbsp;&nbsp; 2). 회원1의 마일리지 ID를 가지고 `/mileages/{mileageId}/mileage-histories` 주소로 요청을 보냅니다.
+* 해당 마일리지의 이력 정보 리스트가 응답됩니다.
+* page를 통해 페이지를 지정할 수 있습니다. (0부터 시작, 기본 값 0)
+* size를 통해 페이지 당 보여줄 데이터 수를 지정할 수 있습니다. (기본 값 10)
+* eventType을 통해 조회할 이벤트 유형을 지정할 수 있습니다.
+* startDate, endDate를 통해 조회할 이력의 날짜 범위를 지정할 수 있습니다. (둘 다 지정해야 합니다)
+* 참고로 회원 1의 이력은 2022-06-29 ~ 2022-07-02 까지 등록일을 배분시켜 놓았습니다.
+
+<br/>
+
+&nbsp;&nbsp; 3) 마일리지 이력 ID를 가지고 `/mileage-histories/{mileageHistoryId}` 로 요청을 보냅니다.
+* 해당 마일리지 이력 정보가 단건으로 응답됩니다.
+
+<br/>
+
+&nbsp;&nbsp; 4) 이벤트 ID를 가지고 `/events/{eventId}` 로 요청을 보냅니다.
+* 해당 이벤트의 정보가 단건으로 응답됩니다.
+
+<br/>
+
+### 2. 이벤트 등록 API 테스트
+&nbsp;&nbsp; **1) 리뷰 작성 이벤트를 등록하는 경우**
+* 회원2의 ID, 장소1 ID, 리뷰1 ID를 가지고 `/events` 로 요청을 보냅니다.
+* contents, attachedPhotoIds 의 유무에 따라 부여되는 점수가 달라집니다.
+```json
+{
+    "type": "REVIEW",
+    "action": "ADD",
+    "reviewId": "cc65772f-f05b-4c07-9e27-c03d42035860",
+    "content": "",           /* content, attachedPhotoIds는 테스트 하고 싶은 경우에 따라 자율적으로 넣어주세요. */
+    "attachedPhotoIds": [],  /* 글만 등록 한 경우의 점수를 알고 싶다면 content만 작성하시면 됩니다 */ 
+    "userId": "3ede0ef2-92b7-4817-a5f3-0c575361f745",
+    "placeId": "83a0d51c-a508-4330-8dd0-fb1576bffbcb"
+}
+```
+<br/>
+
+&nbsp;&nbsp; **2) 리뷰 수정 이벤트를 등록하는 경우**
+* 수정되었다고 가정할 content, attachedPhotoIds 를 자율적으로 넣어서 `events` 로 요청을 보냅니다.
+```json
+{
+    "type": "REVIEW",
+    "action": "MOD",
+    "reviewId": "cc65772f-f05b-4c07-9e27-c03d42035860",
+    "content": "",           /* content, attachedPhotoIds는 테스트 하고 싶은 경우에 따라 자율적으로 수정해주세요. */
+    "attachedPhotoIds": [],  
+    "userId": "3ede0ef2-92b7-4817-a5f3-0c575361f745",
+    "placeId": "83a0d51c-a508-4330-8dd0-fb1576bffbcb"
+}
+```
+<br/>
+
+&nbsp;&nbsp; **3) 리뷰 삭제 이벤트를 등록하는 경우**
+* 따로 content, attachedPhotoIds 필드에 값을 넣어주지 않아도 됩니다.
+```json
+{
+    "type": "REVIEW",
+    "action": "DELETE",
+    "reviewId": "cc65772f-f05b-4c07-9e27-c03d42035860",
+    "content": "",         
+    "attachedPhotoIds": [],
+    "userId": "3ede0ef2-92b7-4817-a5f3-0c575361f745",
+    "placeId": "83a0d51c-a508-4330-8dd0-fb1576bffbcb"
+}
+```
+<br/>
+
+&nbsp;&nbsp; **4) 첫 리뷰 보너스 점수를 테스트할 경우**
+* 회원1의 ID, 장소3 ID, 리뷰3 ID를 가지고 `/events` 로 요청을 보냅니다.
+* 보너스 점수 외에 내용점수는 content, attachedPhotoIds 에 의존하는 것은 동일합니다.
+```json
+{
+    "type": "REVIEW",
+    "action": "ADD",
+    "reviewId": "cc65772f-f05b-4c07-9e27-c03d42035860",
+    "content": "",
+    "attachedPhotoIds": [],
+    "userId": "3ede0ef2-92b7-4817-a5f3-0c575361f745",
+    "placeId": "83a0d51c-a508-4330-8dd0-fb1576bffbcb"
+}
+```
+<br/>
+
+&nbsp;&nbsp; **5) 이벤트에 따라 회원의 마일리지가 변경되는 것을 테스트하는 경우**
+* 확인할 회원의 ID를 가지고 `/users/{userId}/mileages` 로 요청을 보내면 확인 가능합니다.
 
 <br/>
 
@@ -106,7 +253,7 @@ create table mileage
     user_id            char (36)    not null,
     constraint mileage_id_pk primary key (mileage_id)
 );
-create index mileage_user_id_idx on mileage (user_id);
+create unique index mileage_user_id_idx on mileage (user_id);
 
 create table mileage_history
 (
@@ -122,7 +269,7 @@ create table mileage_history
     mileage_id         char (36)    not null,
     constraint mileage_history_id_pk primary key (mileage_history_id)
 );
-create index mileage_history_event_id_idx on mileage_history (event_id);
+create unique index mileage_history_event_id_idx on mileage_history (event_id);
 create index mileage_history_mileage_id_idx on mileage_history (mileage_id);
 
 create table review
@@ -166,12 +313,12 @@ create index review_photo_review_id_idx on review_photo (review_id);
 * 응답 데이터 예시
 ```json
 {
-  "id": "2119445e-9b19-456c-ae46-90e1d1f19363",   /* 해당 유저의 마일리지 ID */
-  "point": 3,                                     /* 해당 유저가 가진 총 포인트 */
-  "user": {
-    "id": "96927c62-6cdb-4918-91fe-8b01d348d33f", /* 유저 ID */
-    "name": "유저1"                                /* 유저 이름 */
-  }
+    "id": "2119445e-9b19-456c-ae46-90e1d1f19363",   /* 해당 유저의 마일리지 ID */
+    "point": 3,                                     /* 해당 유저가 가진 총 포인트 */
+    "user": {
+    "id": "96927c62-6cdb-4918-91fe-8b01d348d33f",   /* 유저 ID */
+    "name": "유저1"                                  /* 유저 이름 */
+    }
 }  
 ```
 <br/>
@@ -199,7 +346,7 @@ create index review_photo_review_id_idx on review_photo (review_id);
             "contentPoint": 0,                                /* 내용 점수 */
             "bonusPoint": 0,                                  /* 보너스 점수 */
             "modifyingFactor": "리뷰 삭제",                    /* 마일리지 이력 변경 요인 */
-            "content": "장소1에 작성한 리뷰를 삭제했습니다."       /* 마일리지 이력 내용 */
+            "content": "장소1에 작성한 리뷰를 삭제했습니다."     /* 마일리지 이력 내용 */
         },
         {
             "id": "9f5192c9-6982-41bb-b7b6-01f03efdf7e2",
@@ -240,18 +387,18 @@ create index review_photo_review_id_idx on review_photo (review_id);
 * 응답 데이터 예시
 ```json
 {
-    "id": "ec685e6a-869f-4003-9320-76b130b3eaf0",
+    "id": "ec685e6a-869f-4003-9320-76b130b3eaf0",          /* 마일리지 이력 ID */
     "event": {
-        "id": "adb8cf9c-c693-46fd-a2cf-460c8d7b5778",
-        "typeId": "b8ef60da-cfe8-4c30-a044-ccb39e3431b6",
-        "eventAction": "ADD",
-        "eventType": "REVIEW"
+        "id": "adb8cf9c-c693-46fd-a2cf-460c8d7b5778",      /* 이벤트 ID */
+        "typeId": "b8ef60da-cfe8-4c30-a044-ccb39e3431b6",  /* 이벤트가 발생한 요소의 ID (여기서는 Review의 ID가 됨) */
+        "eventAction": "ADD",                              /* 이벤트 유형 */
+        "eventType": "REVIEW"                              /* 이벤트 타입 */
     },
-    "modifiedPoint": 3,
-    "contentPoint": 2,
-    "bonusPoint": 1,
-    "modifyingFactor": "텍스트와 사진 리뷰 작성",
-    "content": "장소1에 리뷰를 작성했습니다."
+    "modifiedPoint": 3,                                    /* 변경된 점수 */
+    "contentPoint": 2,                                     /* 내용 점수 */
+    "bonusPoint": 1,                                       /* 보너스 점수 */
+    "modifyingFactor": "텍스트와 사진 리뷰 작성",            /* 마일리지 이력 변경 요인 */
+    "content": "장소1에 리뷰를 작성했습니다."                /* 마일리지 이력 내용 */
 }
 ```
 <br/>
@@ -260,20 +407,20 @@ create index review_photo_review_id_idx on review_photo (review_id);
 * 요청 데이터 예시
 ```json
 {
-  "type": "REVIEW",
-  "action": "ADD",
-  "reviewId": "b8ef60da-cfe8-4c30-a044-ccb39e3431b6",
-  "content": "리뷰 내용",   /* ADD, MOD 시에는 content, attachedPhotoIds 중 하나의 필드는 무조건 있어야 함 */
-  "attachedPhotoIds": ["3ba2fc13-1bb7-4d5d-8deb-b72402f9b5a7", "200ab535-d711-41cc-a0df-86eea85c9891"],
-  "userId": "96927c62-6cdb-4918-91fe-8b01d348d33f",
-  "placeId": "83a0d51c-a508-4330-8dd0-fb1576bffbcb"
+    "type": "REVIEW",
+    "action": "ADD",
+    "reviewId": "b8ef60da-cfe8-4c30-a044-ccb39e3431b6",
+    "content": "리뷰 내용",   /* ADD, MOD 시에는 content, attachedPhotoIds 중 하나의 필드는 무조건 있어야 함 */
+    "attachedPhotoIds": ["3ba2fc13-1bb7-4d5d-8deb-b72402f9b5a7", "200ab535-d711-41cc-a0df-86eea85c9891"],
+    "userId": "96927c62-6cdb-4918-91fe-8b01d348d33f",
+    "placeId": "83a0d51c-a508-4330-8dd0-fb1576bffbcb"
 }
 ```
-* 응답 데이터 예시 (저장된 Event, MileageHistory ID 반환)
+* 응답 데이터 예시
 ```json
 {
-    "mileageHistoryId": "ec685e6a-869f-4003-9320-76b130b3eaf0",
-    "eventId": "adb8cf9c-c693-46fd-a2cf-460c8d7b5778"
+    "mileageHistoryId": "ec685e6a-869f-4003-9320-76b130b3eaf0",   /* 저장된 이벤트 ID */
+    "eventId": "adb8cf9c-c693-46fd-a2cf-460c8d7b5778"             /* 저장된 마일리지 이력 ID */
 }
 ```
 <br/>
@@ -282,24 +429,27 @@ create index review_photo_review_id_idx on review_photo (review_id);
 * 응답 데이터 예시
 ```json
 {
-    "id": "adb8cf9c-c693-46fd-a2cf-460c8d7b5778",
-    "typeId": "b8ef60da-cfe8-4c30-a044-ccb39e3431b6",
-    "eventAction": "ADD",
-    "eventType": "REVIEW"
+    "id": "adb8cf9c-c693-46fd-a2cf-460c8d7b5778",     /* 이벤트 ID */
+    "typeId": "b8ef60da-cfe8-4c30-a044-ccb39e3431b6", /* 이벤트가 발생한 요소의 ID (여기서는 Review의 ID가 됨) */
+    "eventAction": "ADD",                             /* 이벤트 유형 */
+    "eventType": "REVIEW"                             /* 이벤트 타입 */
 }
 ```
+
 <br/>
 
 > ### **5) 프로젝트 구조**
 ![project-structure](https://user-images.githubusercontent.com/97069541/176664348-7e2dcf80-99b2-40db-9623-a158064cd59a.jpg)
 
-**웹 계층과 도메인 계층을 분리**
+<br/>
+
+### **웹 계층과 도메인 계층을 분리**
 * 도메인 계층은 웹 계층을 의존하지 않습니다.
 * 웹 계층의 변경이 도메인 계층에 영향을 미치지 않습니다.
 
 <br/>
 
-**패키지 구조**
+### **패키지 구조**
 * com.triple.clubmileage
     * domain
         * 비즈니스 로직 패키지(도메인별로 분리)
