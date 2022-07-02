@@ -28,7 +28,7 @@ public class MileageHistoryRepositoryImpl implements MileageHistoryRepositoryCus
     public List<MileageHistory> findAllByTypeId(String typeId) {
         return queryFactory
                 .selectFrom(mileageHistory)
-                .join(mileageHistory.event, event).fetchJoin()
+                .join(mileageHistory.event, event)
                 .where(event.typeId.eq(typeId))
                 .fetch();
     }

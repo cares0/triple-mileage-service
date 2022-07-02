@@ -94,11 +94,12 @@ public class EventServiceReviewImpl implements EventService {
         // reviewId를 가지고 해당 리뷰와 관련된 마일리지이력을 모두 가져옴
         List<MileageHistory> mileageHistories = mileageHistoryRepository.findAllByTypeId(event.getTypeId());
         if (CollectionUtils.isEmpty(mileageHistories)) {
-            throw new EntityNotFoundException("해당 ReviewId를 가진 이벤트를 찾을 수 없음");
+            throw new EntityNotFoundException("해당 ReviewId를 가진 이벤트를 찾을 수 없음" +
+                    "\n 해당 장소에 리뷰가 작성되어있지 않은 경우에 수정 이벤트를 보내면 이 예외가 발생합니다.");
         }
-        // 최종 변경일을 기준으로 내림차순 정렬해서 가장 최근에 변경된 이력 1개만 반환
+        // 생성일을 기준으로 내림차순 정렬해서 가장 최근에 생성된 이력 1개만 반환
         return mileageHistories.stream()
-                .sorted(Comparator.comparing(MileageHistory::getLastModifiedDate, Comparator.reverseOrder()))
+                .sorted(Comparator.comparing(MileageHistory::getCreatedDate, Comparator.reverseOrder()))
                 .limit(1).collect(Collectors.toList()).get(0);
     }
 
