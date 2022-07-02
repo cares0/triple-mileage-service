@@ -95,7 +95,7 @@ public class EventServiceReviewImpl implements EventService {
         List<MileageHistory> mileageHistories = mileageHistoryRepository.findAllByTypeId(event.getTypeId());
         if (CollectionUtils.isEmpty(mileageHistories)) {
             throw new EntityNotFoundException("해당 ReviewId를 가진 이벤트를 찾을 수 없음" +
-                    "\n 해당 장소에 리뷰가 작성되어있지 않은 경우에 수정 이벤트를 보내면 이 예외가 발생합니다.");
+                    "\n 해당 리뷰의 등록 이벤트가 발생되지 않은 채 수정 이벤트를 보내면 이 예외가 발생합니다.");
         }
         // 생성일을 기준으로 내림차순 정렬해서 가장 최근에 생성된 이력 1개만 반환
         return mileageHistories.stream()
