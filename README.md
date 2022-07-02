@@ -2,7 +2,7 @@
 
 <br/>
 
-## **목차**
+>## **목차**
 
 <br/>
 
@@ -18,35 +18,35 @@
 
 <br/>
 
-## **들어가기 전에**
+>## **들어가기 전에**
 
 <br/>
 
-1. **다른 서버에서 리뷰가 등록된 다음에 이 애플리케이션으로 이벤트 등록 정보가 넘어온다고 가정합니다.**
-   * 리뷰 등록은 다른 서버에서 처리한다고 가정했기에 구현하지 않았습니다.
-   * 리뷰가 등록되어 있어야 이벤트도 등록이 가능합니다.
+###1. **다른 서버에서 리뷰가 등록된 다음에 이 애플리케이션으로 이벤트 등록 정보가 넘어온다고 가정합니다.**
+* 리뷰 등록은 다른 서버에서 처리한다고 가정했기에 구현하지 않았습니다.
+* 리뷰가 등록되어 있어야 이벤트도 등록이 가능합니다.
+  
+<br/>
 
-   <br/>
+### 2. **리뷰는 아래의 경우로 등록될 수 있다고 가정했습니다.**
+* 글만 작성하는 경우
+* 사진만 등록하는 경우
+* 글과 사진 모두 등록하는 경우
 
-2. **리뷰는 아래의 경우로 등록될 수 있다고 가정했습니다.**
-    * 글만 작성하는 경우
-    * 사진만 등록하는 경우
-    * 글과 사진 모두 등록하는 경우
+<br/>
 
-   <br/>
+### 3. **이벤트의 타입은 리뷰뿐만 아니라 다른 타입도 가능할 것을 고려했습니다.**
+* 이벤트 타입의 확장성을 고려하여 구현했습니다.
+* 각 타입별로 처리해야 할 로직이 다르다고 가정합니다.
+* 예시를 위해 이 애플리케이션에서는 항공 예약시 발생하는 이벤트도 있다고 가정했습니다.
+* 항공 예약 시 발생하는 이벤트 등록과 적립 로직은 구현하지 않고, 프로젝트 구조만 구현했습니다.
 
-3. **이벤트의 타입은 리뷰 뿐만 아니라 다른 타입도 가능할 것을 고려했습니다.**
-   * 이벤트 타입의 확장성을 고려하여 구현했습니다.
-   * 각 타입별로 처리해야 할 로직이 다르다고 가정합니다.
-   * 예시를 위해 이 애플리케이션에서는 항공 예약시 발생하는 이벤트도 있다고 가정했습니다.
-   * 항공 예약 시 발생하는 이벤트 등록과 적립 로직은 구현하지 않고, 프로젝트 구조만 구현했습니다.
+<br/>
 
-    <br/>
-   
-4. **발생하기 힘든 버그는 어느정도 배제했습니다.**
-   * 예를 들어, 리뷰가 등록될 경우 무조건 단 한번만 ADD 이벤트가 발생한다고 가정했습니다.
-   * 따라서 동일 리뷰에 대해 ADD 이벤트가 2번 발생할 경우는 예외를 발생시키지 않습니다.
-   * 예외를 배제했을 경우 쿼리 최적화가 가능해지는 경우에만 적용했습니다.
+### 4. **발생하기 힘든 버그는 어느 정도 배제했습니다.**
+* 예를 들어, 리뷰가 등록될 경우 무조건 단 한번의 ADD 이벤트 등록 요청이 발생한다고 가정했습니다.
+* 따라서 동일 리뷰에 대해 ADD 이벤트 등록 요청이 2번 이상 발생할 경우는 예외를 발생시키지 않습니다.
+* 이는 예외를 배제했을 경우 쿼리 최적화가 가능해지는 경우에만 적용했습니다.
 
 <br>
 
@@ -54,12 +54,95 @@ ___
 
 <br/>
 
-## **1. 애플리케이션 실행 방법**
+# **1. 애플리케이션 실행 방법**
 
-> ### **1) 직접 애플리케이션을 테스트하는 경우**
+<br/>
 
+> ## **1) 직접 애플리케이션을 테스트하는 경우**
 
-> ### **2) 배포된 애플리케이션을 테스트하는 경우**
+* **Intellij 와 MySQL 서버가 필요합니다.**
+
+### 1. 소스 코드를 다운받아 압축을 풀어주세요.
+* [소스코드 다운](https://drive.google.com/file/d/1EhCNcSYX2P-sQgGIsNR0wuKsX3OP-Mnm/view?usp=sharing)
+
+### 2. Intellij 에서 File - Open 으로 들어가서 다운받은 프로젝트의 build.gradle 을 선택해주세요.
+
+### 3. Open as a project 를 선택해서 프로젝트를 빌드해주세요.
+
+### 4. src/main/resources/application.yml 파일을 열어 다음 부분을 수정해주세요.
+```yaml
+spring:
+  profiles:
+    default: dev   /* prod -> dev */ 
+```
+
+### 5. src/main/resources/ 경로에 application-dev.yml 파일을 만들고 작성해주세요.
+* 아래를 참고하여 DB 설정 정보를 넣어주세요. (MySQL 기준입니다.)
+```yaml
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    url: jdbc:mysql://{DB 호스트 주소}:{포트번호}/{스키마명}
+    username: DB 호스트 이름
+    password: DB 비밀변호
+    driver-class-name: com.mysql.cj.jdbc.Driver /* 다른 DB 사용 시 맞는 드라이버를 설정해주세요 */  
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+```
+
+### 6. 연결한 DB에 아래에 기술한 [DDL](https://github.com/cares0/triple-mileage-service/tree/main#3-ddl) 을 실행시켜주세요. 
+
+### 7. 프로젝트를 실행하고 문제가 없다면 정상적으로 테스트가 가능합니다.
+
+<br/>
+
+### 직접 테스트 할 경우 주의점
+1. User, Mileage, Place, Review 는 직접 DML로 등록해주어야 합니다.
+```sql
+-- user
+insert into users (created_date, last_modified_date, name, user_id) 
+values (now(), now(), '유저1', '96927c62-6cdb-4918-91fe-8b01d348d33f');
+
+-- mileage
+insert into mileage (created_date, last_modified_date, point, user_id, mileage_id) 
+values (now(), now(), 0, '96927c62-6cdb-4918-91fe-8b01d348d33f', '2119445e-9b19-456c-ae46-90e1d1f19363');
+
+-- place
+insert into place (created_date, last_modified_date, name, place_id) 
+values (now(), now(), '장소1', '83a0d51c-a508-4330-8dd0-fb1576bffbcb');
+
+-- user1 review
+insert into review (created_date, last_modified_date, content, place_id, user_id, review_id) 
+values (now(), now(), '리뷰1 - 장소1', '83a0d51c-a508-4330-8dd0-fb1576bffbcb', '96927c62-6cdb-4918-91fe-8b01d348d33f', 'b8ef60da-cfe8-4c30-a044-ccb39e3431b6');
+```
+<br/>
+
+2. DML로 등록한 User, Place, Review를 통해 이벤트 등록 API를 적절히 호출해주세요. (아래는 예시입니다.)
+```json
+{
+    "type": "REVIEW",
+    "action": "ADD",
+    "reviewId": "b8ef60da-cfe8-4c30-a044-ccb39e3431b6",
+    "content": "",           /* content, attachedPhotoIds는 테스트 하고 싶은 경우에 따라 자율적으로 넣어주세요. */
+    "attachedPhotoIds": [],  /* 예를 들어, 글만 등록 한 경우의 점수를 알고 싶다면 content만 작성하시면 됩니다 */ 
+    "userId": "96927c62-6cdb-4918-91fe-8b01d348d33f",
+    "placeId": "83a0d51c-a508-4330-8dd0-fb1576bffbcb"
+}
+```
+<br/>
+
+3. Review 테이블에 존재하는 Review 데이터만 테스트하는 것을 권장합니다.
+* 예를 들어, Review 테이블에 데이터를 저장하지 않고 ADD 이벤트를 호출했을 경우, 보너스 점수에서 문제가 발생할 수 있습니다.
+* Review 테이블에 Place의 ID를 가지고 데이터를 찾아 조회된 리뷰가 1개라면 최초의 리뷰로 인지하고 보너스 점수를 부여하기 때문입니다.
+* 첫 리뷰는 등록했지만, 두 번째 리뷰는 Review 테이블에 등록하지 않고 이벤트를 호출한다면 최초의 리뷰로 판단되어 보너스 점수가 부여되어 버립니다.
+
+<br/>
+
+> ## **2) 배포된 애플리케이션을 테스트하는 경우**
 애플리케이션을 EC2를 통해 배포해놓았습니다.  
 주소 : 
 
@@ -67,8 +150,8 @@ Postman을 통해서 테스트 하는 것을 권장드립니다.
 
 <br/>
 
-### 더미 데이터 설명
-테스트를 위해 더미데이터를 넣어놨고, 식별자는 아래와 같습니다.
+### 테스트 데이터 설명
+테스트를 위한 데이터를 넣어놨습니다. 식별자는 아래와 같습니다.
 
 | 회원  | 회원 ID                                | 마일리지 ID                              |
 |:----|:-------------------------------------|:-------------------------------------|
@@ -174,7 +257,7 @@ Postman을 통해서 테스트 하는 것을 권장드립니다.
 ```
 <br/>
 
-&nbsp;&nbsp; **4) 첫 리뷰 보너스 점수를 테스트할 경우**
+&nbsp;&nbsp; **4) 첫 리뷰 보너스 점수를 테스트하는 경우**
 * 회원1의 ID, 장소3 ID, 리뷰3 ID를 가지고 `/events` 로 요청을 보냅니다.
 * 보너스 점수 외에 내용점수는 content, attachedPhotoIds 에 의존하는 것은 동일합니다.
 ```json
@@ -199,19 +282,19 @@ ___
 
 <br/>
 
-## **2. 프로젝트 설계**
+# **2. 프로젝트 설계**
 
-> ### **1) E-R 다이어그램**
+> ## **1) E-R 다이어그램**
 ![E-R Diagram](https://user-images.githubusercontent.com/97069541/176802230-9d749926-460b-4ba9-8f8e-2f3e0a66021a.jpg)
 
 <br/>
 
-> ### **2) 테이블 모델**
+> ## **2) 테이블 모델**
 ![table-structure](https://user-images.githubusercontent.com/97069541/176828773-d787f10e-9129-418d-9f9e-f3b2272277c4.jpg)
 
 <br/>
 
-> ### **3) DDL**
+> ## **3) DDL**
 * 물리적으로 FK는 지정하지 않았습니다.
 ```sql
 create table event
@@ -298,7 +381,7 @@ create index review_photo_review_id_idx on review_photo (review_id);
 
 <br/>
 
-> ### **4) REST API 스펙**
+> ## **4) REST API 스펙**
 | Method | URI                                     | Description        | Query String                              |
 |:-------|:----------------------------------------|:-------------------|:------------------------------------------|
 | GET    | /users/{userId}/mileages                | 유저의 마일리지 조회        | X                                         |
@@ -438,7 +521,7 @@ create index review_photo_review_id_idx on review_photo (review_id);
 
 <br/>
 
-> ### **5) 프로젝트 구조**
+> ## **5) 프로젝트 구조**
 ![project-structure](https://user-images.githubusercontent.com/97069541/176664348-7e2dcf80-99b2-40db-9623-a158064cd59a.jpg)
 
 <br/>
