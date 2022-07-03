@@ -65,6 +65,8 @@
 ### 5. 테스트 중에 문제가 발생하거나 프로젝트 테스트 방법, 구현 과정에 대해 더 자세한 설명이 필요한 경우 메일을 보내주세요.
 * cares00000@gmail.com
 
+<br/>
+
 ### 6. 가능하면 테스트 이전에 [프로젝트 설계](https://github.com/cares0/triple-mileage-service#2-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%EC%84%A4%EA%B3%84-1) 부분을 먼저 보시는 것을 권장합니다.
 
 <br/>
