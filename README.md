@@ -8,14 +8,14 @@
 
 ### 1. 애플리케이션 실행 방법
 &nbsp;&nbsp; 1) [직접 애플리케이션을 테스트하는 경우](https://github.com/cares0/triple-mileage-service#1-%EC%A7%81%EC%A0%91-%EC%95%A0%ED%94%8C%EB%A6%AC%EC%BC%80%EC%9D%B4%EC%85%98%EC%9D%84-%ED%85%8C%EC%8A%A4%ED%8A%B8%ED%95%98%EB%8A%94-%EA%B2%BD%EC%9A%B0)  
-&nbsp;&nbsp; 2) [배포된 애플리케이션을 테스트하는 경우](https://github.com/cares0/triple-mileage-service#1-%EC%A7%81%EC%A0%91-%EC%95%A0%ED%94%8C%EB%A6%AC%EC%BC%80%EC%9D%B4%EC%85%98%EC%9D%84-%ED%85%8C%EC%8A%A4%ED%8A%B8%ED%95%98%EB%8A%94-%EA%B2%BD%EC%9A%B0)
+&nbsp;&nbsp; 2) [배포된 애플리케이션을 테스트하는 경우](https://github.com/cares0/triple-mileage-service#2-%EB%B0%B0%ED%8F%AC%EB%90%9C-%EC%95%A0%ED%94%8C%EB%A6%AC%EC%BC%80%EC%9D%B4%EC%85%98%EC%9D%84-%ED%85%8C%EC%8A%A4%ED%8A%B8%ED%95%98%EB%8A%94-%EA%B2%BD%EC%9A%B0)
 
   <br/>
 
 ### 2. 프로젝트 설계
 &nbsp;&nbsp; 1) [E-R 다이어그램](https://github.com/cares0/triple-mileage-service#1-e-r-%EB%8B%A4%EC%9D%B4%EC%96%B4%EA%B7%B8%EB%9E%A8)   
 &nbsp;&nbsp; 2) [테이블 모델](https://github.com/cares0/triple-mileage-service#2-%ED%85%8C%EC%9D%B4%EB%B8%94-%EB%AA%A8%EB%8D%B8)   
-&nbsp;&nbsp; 3) [DDL](https://github.com/cares0/triple-mileage-service#2-%ED%85%8C%EC%9D%B4%EB%B8%94-%EB%AA%A8%EB%8D%B8)   
+&nbsp;&nbsp; 3) [DDL](https://github.com/cares0/triple-mileage-service#3-ddl)   
 &nbsp;&nbsp; 4) [REST API 스펙](https://github.com/cares0/triple-mileage-service#4-rest-api-%EC%8A%A4%ED%8E%99)   
 &nbsp;&nbsp; 5) [프로젝트 구조](https://github.com/cares0/triple-mileage-service#5-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%EA%B5%AC%EC%A1%B0)
 
