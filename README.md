@@ -201,14 +201,17 @@ values (now(), now(), '리뷰1 - 장소1', '83a0d51c-a508-4330-8dd0-fb1576bffbcb
 <br/>
 
 ### 1. 조회 API 테스트 (자세한 사항은 [2-4. REST API 스펙](https://github.com/cares0/triple-mileage-service#4-rest-api-%EC%8A%A4%ED%8E%99) 을 참고해주세요.)
-
-&nbsp;&nbsp; **1) 회원1의 ID를 `/users/{userId}/mileages` 로 경로변수에 넣어 요청을 보냅니다.**
-* 회원1의 마일리지 정보가 응답됩니다.
+* 조회는 회원 1의 데이터를 가지고 테스트합니다.
 
 <br/>
 
-&nbsp;&nbsp; **2). 회원1의 마일리지 ID를 가지고 `/mileages/{mileageId}/mileage-histories` 주소로 요청을 보냅니다.**
-* 해당 마일리지의 이력 정보 리스트가 응답됩니다.
+&nbsp;&nbsp; **1) 회원 1의 마일리지 조회**
+* `/users/96927c62-6cdb-4918-91fe-8b01d348d33f/mileages` 로 요청을 보냅니다.
+
+<br/>
+
+&nbsp;&nbsp; **2) 회원1의 마일리지의 이력 리스트 조회**
+* `/mileages/2119445e-9b19-456c-ae46-90e1d1f19363/mileage-histories` 요청을 보냅니다.
 * page를 통해 페이지를 지정할 수 있습니다. (0부터 시작, 기본 값 0)
 * size를 통해 페이지 당 보여줄 데이터 수를 지정할 수 있습니다. (기본 값 10)
 * eventType을 통해 조회할 이벤트 유형을 지정할 수 있습니다.
@@ -217,17 +220,24 @@ values (now(), now(), '리뷰1 - 장소1', '83a0d51c-a508-4330-8dd0-fb1576bffbcb
 
 <br/>
 
-&nbsp;&nbsp; **3) 마일리지 이력 ID를 가지고 `/mileage-histories/{mileageHistoryId}` 로 요청을 보냅니다.**
-* 해당 마일리지 이력 정보가 단건으로 응답됩니다.
+&nbsp;&nbsp; **3) 마일리지 이력 정보 단건 조회** 
+* 2번에서 조회한 마일리지 이력 리스트에는 ID 값이 응답되어 있습니다.
+* 조회할 마일리지 이력 ID를 `/mileage-histories/{mileageHistoryId}` 의 경로변수에 넣어 요청을 보냅니다.
 
 <br/>
 
-&nbsp;&nbsp; **4) 이벤트 ID를 가지고 `/events/{eventId}` 로 요청을 보냅니다.**
-* 해당 이벤트의 정보가 단건으로 응답됩니다.
+&nbsp;&nbsp; **4) 이벤트의 정보 단건 조회**
+* 2번 혹은 3번에서 조회한 마일리지 이력에는 이벤트 ID 값이 응답되어 있습니다.
+* 조회할 이벤트 ID를 `/events/{eventId}` 의 경로변수에 넣어 요청을 보냅니다.
 
 <br/>
 
 ### 2. 이벤트 등록 API 테스트
+* 등록은 회원2의 데이터를 가지고 테스트합니다.
+* 첫 리뷰 보너스의 경우 회원1 - 리뷰3의 데이터를 가지고 테스트합니다.
+
+<br>
+
 &nbsp;&nbsp; **1) 리뷰 작성 이벤트를 등록하는 경우**
 * 회원2의 ID, 장소1 ID, 리뷰1 ID를 가지고 `/events` 로 요청을 보냅니다.
 * contents, attachedPhotoIds 의 유무에 따라 부여되는 점수가 달라집니다. (null 값은 허용되지 않습니다.)
