@@ -12,6 +12,7 @@ spring:
 server:
   error:
     include-message: always
+  port: 80
 
 logging.level:
   org.hibernate.SQL: debug
