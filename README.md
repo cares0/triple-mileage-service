@@ -1,6 +1,6 @@
 # Triple Club Mileage Service
 
-<br/>
+<br/><br/>
 
 >## **목차**
 
@@ -9,22 +9,25 @@
 ### 1. 애플리케이션 실행 방법
 &nbsp;&nbsp; 1) 직접 애플리케이션을 테스트하는 경우  
 &nbsp;&nbsp; 2) 배포된 애플리케이션을 테스트하는 경우
-### 2. 프로젝트 설계 설명
+
+<br/>
+
+### 2. 프로젝트 설계
 &nbsp;&nbsp; 1) E-R 다이어그램   
 &nbsp;&nbsp; 2) 테이블 모델   
 &nbsp;&nbsp; 3) DDL   
 &nbsp;&nbsp; 4) REST API 스펙   
 &nbsp;&nbsp; 5) 프로젝트 구조
 
-<br/>
+<br/><br/>
 
 >## **들어가기 전에**
 
 <br/>
 
-###1. **다른 서버에서 리뷰가 등록된 다음에 이 애플리케이션으로 이벤트 등록 정보가 넘어온다고 가정합니다.**
+### 1. **다른 서버에서 리뷰가 등록된 다음에 이 애플리케이션으로 이벤트 등록 정보가 넘어온다고 가정합니다.**
 * 리뷰 등록은 다른 서버에서 처리한다고 가정했기에 구현하지 않았습니다.
-* 리뷰가 등록되어 있어야 이벤트도 등록이 가능합니다.
+* DB에 리뷰가 저장되어 있어야 이벤트도 등록에 문제가 발생하지 않습니다.
   
 <br/>
 
@@ -48,26 +51,34 @@
 * 따라서 동일 리뷰에 대해 ADD 이벤트 등록 요청이 2번 이상 발생할 경우는 예외를 발생시키지 않습니다.
 * 이는 예외를 배제했을 경우 쿼리 최적화가 가능해지는 경우에만 적용했습니다.
 
-<br>
+<br/>
+
+### 5. 문제가 발생하거나 프로젝트 테스트 방법, 구현 과정에 대해 더 자세한 설명이 필요한 경우 메일을 남겨주세요.
+* cares00000@gmail.com
+
+<br/>
 
 ___
 
-<br/>
-
 # **1. 애플리케이션 실행 방법**
 
-<br/>
+<br/><br/>
 
 > ## **1) 직접 애플리케이션을 테스트하는 경우**
 
 * **Intellij 와 MySQL 서버가 필요합니다.**
 
-### 1. 소스 코드를 다운받아 압축을 풀어주세요.
-* [소스코드 다운](https://drive.google.com/file/d/1EhCNcSYX2P-sQgGIsNR0wuKsX3OP-Mnm/view?usp=sharing)
+<br/>
+
+### 1. 소스 코드를 다운로드해서 압축을 풀어주세요.
+* [소스코드 다운로드](https://drive.google.com/file/d/1EhCNcSYX2P-sQgGIsNR0wuKsX3OP-Mnm/view?usp=sharing)
+<br/>
 
 ### 2. Intellij 에서 File - Open 으로 들어가서 다운받은 프로젝트의 build.gradle 을 선택해주세요.
+<br/>
 
 ### 3. Open as a project 를 선택해서 프로젝트를 빌드해주세요.
+<br/>
 
 ### 4. src/main/resources/application.yml 파일을 열어 다음 부분을 수정해주세요.
 ```yaml
@@ -75,6 +86,7 @@ spring:
   profiles:
     default: dev   /* prod -> dev */ 
 ```
+<br/>
 
 ### 5. src/main/resources/ 경로에 application-dev.yml 파일을 만들고 작성해주세요.
 * 아래를 참고하여 DB 설정 정보를 넣어주세요. (MySQL 기준입니다.)
@@ -93,14 +105,16 @@ spring:
     hibernate:
       ddl-auto: none
 ```
+<br/>
 
-### 6. 연결한 DB에 아래에 기술한 [DDL](https://github.com/cares0/triple-mileage-service/tree/main#3-ddl) 을 실행시켜주세요. 
+### 6. 연결한 DB에 아래에 기술한 [DDL](https://github.com/cares0/triple-mileage-service#3-ddl) 을 실행시켜주세요. 
+<br/>
 
 ### 7. 프로젝트를 실행하고 문제가 없다면 정상적으로 테스트가 가능합니다.
 
-<br/>
+<br/><br/>
 
-### 직접 테스트 할 경우 주의점
+### **직접 테스트 할 경우 주의점**
 1. User, Mileage, Place, Review 는 직접 DML로 등록해주어야 합니다.
 ```sql
 -- user
@@ -140,13 +154,16 @@ values (now(), now(), '리뷰1 - 장소1', '83a0d51c-a508-4330-8dd0-fb1576bffbcb
 * Review 테이블에 Place의 ID를 가지고 데이터를 찾아 조회된 리뷰가 1개라면 최초의 리뷰로 인지하고 보너스 점수를 부여하기 때문입니다.
 * 첫 리뷰는 등록했지만, 두 번째 리뷰는 Review 테이블에 등록하지 않고 이벤트를 호출한다면 최초의 리뷰로 판단되어 보너스 점수가 부여되어 버립니다.
 
-<br/>
+<br/><br/>
 
 > ## **2) 배포된 애플리케이션을 테스트하는 경우**
-애플리케이션을 EC2를 통해 배포해놓았습니다.  
-주소 : 
 
-Postman을 통해서 테스트 하는 것을 권장드립니다.
+<br/> 
+
+### **서버 정보**  
+* **서버 IP: 3.39.227.64**
+* **포트: 80**
+* Postman을 통해서 테스트 하는 것을 권장드립니다.
 
 <br/>
 
@@ -172,7 +189,7 @@ Postman을 통해서 테스트 하는 것을 권장드립니다.
 | 유저2의 리뷰1 - 장소1 | cc65772f-f05b-4c07-9e27-c03d42035860 | 등록 X      |
 | 유저2의 리뷰2 - 장소2 | 3aeec395-ee1a-4dbe-9ab5-19e08ed7b395 | 등록 X      |
 
-리뷰 등록, 수정, 삭제는 다른 서버에서 진행하게 되고 발생한 이벤트에 대해서만 이 서버로 들어온다고 설정했습니다.  
+리뷰 등록, 수정, 삭제는 다른 서버에서 진행하게 되고 발생한 이벤트에 대해서만 이 서버로 들어온다고 설정했습니다.   
 따라서 테스트를 위해 리뷰 데이터를 5개 미리 DB에 등록해놨습니다.
 
 * 회원이 2명 존재하고, 장소1, 장소2에 대해 각 회원마다 리뷰를 한 개씩 작성해 놓은 상황입니다.
@@ -213,7 +230,7 @@ Postman을 통해서 테스트 하는 것을 권장드립니다.
 ### 2. 이벤트 등록 API 테스트
 &nbsp;&nbsp; **1) 리뷰 작성 이벤트를 등록하는 경우**
 * 회원2의 ID, 장소1 ID, 리뷰1 ID를 가지고 `/events` 로 요청을 보냅니다.
-* contents, attachedPhotoIds 의 유무에 따라 부여되는 점수가 달라집니다.
+* contents, attachedPhotoIds 의 유무에 따라 부여되는 점수가 달라집니다. (null 값은 허용되지 않습니다.)
 ```json
 {
     "type": "REVIEW",
@@ -284,15 +301,17 @@ ___
 
 # **2. 프로젝트 설계**
 
+<br/><br/>
+
 > ## **1) E-R 다이어그램**
 ![E-R Diagram](https://user-images.githubusercontent.com/97069541/176802230-9d749926-460b-4ba9-8f8e-2f3e0a66021a.jpg)
 
-<br/>
+<br/><br/>
 
 > ## **2) 테이블 모델**
 ![table-structure](https://user-images.githubusercontent.com/97069541/176828773-d787f10e-9129-418d-9f9e-f3b2272277c4.jpg)
 
-<br/>
+<br/><br/>
 
 > ## **3) DDL**
 * 물리적으로 FK는 지정하지 않았습니다.
@@ -379,7 +398,7 @@ create table review_photo
 create index review_photo_review_id_idx on review_photo (review_id);
 ```
 
-<br/>
+<br/><br/>
 
 > ## **4) REST API 스펙**
 | Method | URI                                     | Description        | Query String                              |
@@ -425,6 +444,7 @@ create index review_photo_review_id_idx on review_photo (review_id);
                 "eventAction": "DELETE",                            /* 이벤트 유형 */
                 "eventType": "REVIEW"                               /* 이벤트 타입 */
             },
+            "createdDate": "2022-07-01T16:05:22.371",
             "modifiedPoint": -2,                              /* 변경된 점수 */
             "contentPoint": 0,                                /* 내용 점수 */
             "bonusPoint": 0,                                  /* 보너스 점수 */
@@ -439,6 +459,7 @@ create index review_photo_review_id_idx on review_photo (review_id);
                 "eventAction": "MOD",
                 "eventType": "REVIEW"
             },
+            "createdDate": "2022-06-30T12:02:13.411",
             "modifiedPoint": -1,
             "contentPoint": 1,
             "bonusPoint": 1,
@@ -453,6 +474,7 @@ create index review_photo_review_id_idx on review_photo (review_id);
                 "eventAction": "ADD",
                 "eventType": "REVIEW"
             },
+            "createdDate": "2022-06-29T19:05:31.125",
             "modifiedPoint": 3,
             "contentPoint": 2,
             "bonusPoint": 1,
@@ -477,6 +499,7 @@ create index review_photo_review_id_idx on review_photo (review_id);
         "eventAction": "ADD",                              /* 이벤트 유형 */
         "eventType": "REVIEW"                              /* 이벤트 타입 */
     },
+    "createdDate": "2022-07-01T16:05:22.371",
     "modifiedPoint": 3,                                    /* 변경된 점수 */
     "contentPoint": 2,                                     /* 내용 점수 */
     "bonusPoint": 1,                                       /* 보너스 점수 */
@@ -519,7 +542,7 @@ create index review_photo_review_id_idx on review_photo (review_id);
 }
 ```
 
-<br/>
+<br/><br/>
 
 > ## **5) 프로젝트 구조**
 ![project-structure](https://user-images.githubusercontent.com/97069541/176664348-7e2dcf80-99b2-40db-9623-a158064cd59a.jpg)
@@ -553,11 +576,6 @@ create index review_photo_review_id_idx on review_photo (review_id);
 
 <br/>
 
-___
-
-<br/>
-
-## 프로젝트 구현
 
 
 
