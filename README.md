@@ -4,20 +4,29 @@
 
 >## **목차**
 
-<br/>
+  <br/>
 
 ### 1. 애플리케이션 실행 방법
-&nbsp;&nbsp; 1) 직접 애플리케이션을 테스트하는 경우  
-&nbsp;&nbsp; 2) 배포된 애플리케이션을 테스트하는 경우
+&nbsp;&nbsp; 1) [직접 애플리케이션을 테스트하는 경우](https://github.com/cares0/triple-mileage-service#1-%EC%A7%81%EC%A0%91-%EC%95%A0%ED%94%8C%EB%A6%AC%EC%BC%80%EC%9D%B4%EC%85%98%EC%9D%84-%ED%85%8C%EC%8A%A4%ED%8A%B8%ED%95%98%EB%8A%94-%EA%B2%BD%EC%9A%B0)  
+&nbsp;&nbsp; 2) [배포된 애플리케이션을 테스트하는 경우](https://github.com/cares0/triple-mileage-service#1-%EC%A7%81%EC%A0%91-%EC%95%A0%ED%94%8C%EB%A6%AC%EC%BC%80%EC%9D%B4%EC%85%98%EC%9D%84-%ED%85%8C%EC%8A%A4%ED%8A%B8%ED%95%98%EB%8A%94-%EA%B2%BD%EC%9A%B0)
 
-<br/>
+  <br/>
 
 ### 2. 프로젝트 설계
-&nbsp;&nbsp; 1) E-R 다이어그램   
-&nbsp;&nbsp; 2) 테이블 모델   
-&nbsp;&nbsp; 3) DDL   
-&nbsp;&nbsp; 4) REST API 스펙   
-&nbsp;&nbsp; 5) 프로젝트 구조
+&nbsp;&nbsp; 1) [E-R 다이어그램](https://github.com/cares0/triple-mileage-service#1-e-r-%EB%8B%A4%EC%9D%B4%EC%96%B4%EA%B7%B8%EB%9E%A8)   
+&nbsp;&nbsp; 2) [테이블 모델](https://github.com/cares0/triple-mileage-service#2-%ED%85%8C%EC%9D%B4%EB%B8%94-%EB%AA%A8%EB%8D%B8)   
+&nbsp;&nbsp; 3) [DDL](https://github.com/cares0/triple-mileage-service#2-%ED%85%8C%EC%9D%B4%EB%B8%94-%EB%AA%A8%EB%8D%B8)   
+&nbsp;&nbsp; 4) [REST API 스펙](https://github.com/cares0/triple-mileage-service#4-rest-api-%EC%8A%A4%ED%8E%99)   
+&nbsp;&nbsp; 5) [프로젝트 구조](https://github.com/cares0/triple-mileage-service#5-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%EA%B5%AC%EC%A1%B0)
+
+<br/><br/>
+
+>## 개발환경
+* Java11
+* Spring2.x
+* JPA, Spring Data JPA, Querydsl
+* MySQL
+* AWS EC2, RDS
 
 <br/><br/>
 
@@ -56,6 +65,8 @@
 ### 5. 테스트 중에 문제가 발생하거나 프로젝트 테스트 방법, 구현 과정에 대해 더 자세한 설명이 필요한 경우 메일을 보내주세요.
 * cares00000@gmail.com
 
+### 6. 가능하면 테스트 이전에 [프로젝트 설계](https://github.com/cares0/triple-mileage-service#2-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%EC%84%A4%EA%B3%84-1) 부분을 먼저 보시는 것을 권장합니다.
+
 <br/>
 
 ___
@@ -66,7 +77,8 @@ ___
 
 > ## **1) 직접 애플리케이션을 테스트하는 경우**
 
-* **Intellij 와 MySQL 서버가 필요합니다.**
+* **Intellij 와 MySQL을 권장드립니다.**
+* **간단하게 H2 DB로 테스트하셔도 문제는 없습니다.**
 
 <br/>
 
@@ -96,10 +108,10 @@ spring:
     activate:
       on-profile: dev
   datasource:
-    url: jdbc:mysql://{DB 호스트 주소}:{포트번호}/{스키마명}
+    url: jdbc:mysql://{DB 호스트 주소}:{포트번호}/{스키마명}    /* H2 사용시 - jdbc:h2:tcp://localhost/~/{스키마명} */  
     username: DB 호스트 이름
     password: DB 비밀변호
-    driver-class-name: com.mysql.cj.jdbc.Driver /* 다른 DB 사용 시 맞는 드라이버를 설정해주세요 */  
+    driver-class-name: com.mysql.cj.jdbc.Driver /* 다른 DB 사용 시 맞는 드라이버를 설정해주세요 (H2 - org.h2.Driver) */  
 
   jpa:
     hibernate:
@@ -160,7 +172,8 @@ values (now(), now(), '리뷰1 - 장소1', '83a0d51c-a508-4330-8dd0-fb1576bffbcb
 
 <br/> 
 
-### **서버 정보**  
+### **서버 정보**
+* EC2를 이용해 애플리케이션을 배포해놓았습니다.
 * **서버 IP: 3.39.227.64**
 * **포트: 80**
 * Postman을 통해서 테스트 하는 것을 권장드립니다.
@@ -255,7 +268,7 @@ values (now(), now(), '리뷰1 - 장소1', '83a0d51c-a508-4330-8dd0-fb1576bffbcb
 <br/>
 
 &nbsp;&nbsp; **2) 리뷰 수정 이벤트를 등록하는 경우**
-* 수정되었다고 가정할 content, attachedPhotoIds 를 자율적으로 넣어서 `events` 로 요청을 보냅니다.
+* 수정되었다고 가정할 content, attachedPhotoIds 를 자율적으로 넣어서 `/events` 로 요청을 보냅니다.
 ```json
 {
     "type": "REVIEW",
